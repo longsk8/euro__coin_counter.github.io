@@ -1,0 +1,79 @@
+/* General Styles */
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap');
+body {
+    font-family: "Assistant", sans-serif;
+    /* Set a default font family */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.titulo__caja {
+    background-image: linear-gradient(135deg, #FFCF71 10%, #2376DD 100%);
+    color: rgb(1, 17, 41);
+    text-align: center;
+    padding: 6px 0;
+    border: 1px solid rgba(0, 0, 0, 0.484);
+}
+
+.titulo__text {
+    font-weight: 700;
+    font-size: 3.5rem;
+}
+
+.caja__moneda {
+    display: grid;
+    grid-template-columns: auto auto;
+    padding: 10px;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.caja__input {
+    width: 80px 80px;
+  
+    padding: 5px;
+    justify-content: center;
+    text-align: center;
+}
+
+.redonda__moneda{
+    color: rgb(1, 17, 41);
+    background-image: linear-gradient(135deg, #FFCF71 10%, #2376DD 100%);
+    text-align: center;
+    justify-content: center;
+    border-radius: 50px;
+    width: 62px;
+    height: 62px;
+    display: inline-block;
+    margin: 4px 0 8px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+   
+}
+
+.input__moneda{
+    border-radius: 20px;
+    width: 160px;
+    padding: 5px 0 5px;
+    text-align: center;
+    font-size: large;
+    color: rgb(1, 17, 41);
+    max-width: 300px;
+    outline: none;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+    
+}
+
+.parrafo__input{
+    color: rgb(1, 17, 41);
+    font-size: 10px;
+    margin: 5px 0;
+    padding: 0;
+}
+
+.parrafo__total{
+    color: rgb(1, 17, 41);
+    margin-left: 10px;
+    font-size: 1.6rem;
+}
