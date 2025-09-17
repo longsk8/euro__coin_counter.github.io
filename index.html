@@ -9,40 +9,33 @@
 </head>
 
 <body>
-
     <main class="main">
         <div class="titulo__caja">
             <h1 class="titulo__text">Coin Counter</h1>
         </div>
 
         <section class="caja__moneda">
-
             <div class="caja__input">
                 <div class="redonda__moneda">
                     <h3 class="titulo__moneda">2€</h3>
                 </div>
-
-                <input class="input__moneda" type="number" id="numero1" min="0" oninput="calcularTotal()">
+                <input class="input__moneda" type="number" id="numero1" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
                 <p class="parrafo__input">total = <span id="resultado1">0</span>€</p>
             </div>
-
 
             <div class="caja__input">
                 <div class="redonda__moneda">
                     <h3 class="titulo__moneda">1€</h3>
                 </div>
-
-                <input class="input__moneda" type="number" id="numero2" min="0" oninput="calcularTotal()">
+                <input class="input__moneda" type="number" id="numero2" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
                 <p class="parrafo__input">total = <span id="resultado2">0</span>€</p>
             </div>
 
             <div class="caja__input">
-
                 <div class="redonda__moneda">
                     <h3 class="titulo__moneda">0.50€</h3>
                 </div>
-
-                <input class="input__moneda" type="number" id="numero3" min="0" oninput="calcularTotal()">
+                <input class="input__moneda" type="number" id="numero3" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
                 <p class="parrafo__input">total = <span id="resultado3">0</span>€</p>
             </div>
 
@@ -50,7 +43,7 @@
                 <div class="redonda__moneda">
                     <h3 class="titulo__moneda">0.20€</h3>
                 </div>
-                <input class="input__moneda" type="number" id="numero4" min="0" oninput="calcularTotal()">
+                <input class="input__moneda" type="number" id="numero4" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
                 <p class="parrafo__input">total = <span id="resultado4">0</span>€</p>
             </div>
 
@@ -58,7 +51,7 @@
                 <div class="redonda__moneda">
                     <h3 class="titulo__moneda">0.10€</h3>
                 </div>
-                <input class="input__moneda" type="number" id="numero5" min="0" oninput="calcularTotal()">
+                <input class="input__moneda" type="number" id="numero5" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
                 <p class="parrafo__input">total = <span id="resultado5">0</span>€</p>
             </div>
 
@@ -66,16 +59,15 @@
                 <div class="redonda__moneda">
                     <h3 class="titulo__moneda">0.05€</h3>
                 </div>
-                <input class="input__moneda" type="number" id="numero6" min="0" oninput="calcularTotal()">
+                <input class="input__moneda" type="number" id="numero6" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
                 <p class="parrafo__input">total = <span id="resultado6">0</span>€</p>
             </div>
-
 
             <div class="caja__input">
                 <div class="redonda__moneda">
                     <h3 class="titulo__moneda">0.02€</h3>
                 </div>
-                <input class="input__moneda" type="number" id="numero7" min="0" oninput="calcularTotal()">
+                <input class="input__moneda" type="number" id="numero7" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
                 <p class="parrafo__input">total = <span id="resultado7">0</span>€</p>
             </div>
 
@@ -83,7 +75,7 @@
                 <div class="redonda__moneda">
                     <h3 class="titulo__moneda">0.01€</h3>
                 </div>
-                <input class="input__moneda" type="number" id="numero8" min="0" oninput="calcularTotal()">
+                <input class="input__moneda" type="number" id="numero8" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
                 <p class="parrafo__input">total = <span id="resultado8">0</span>€</p>
             </div>
 
@@ -92,5 +84,4 @@
     </main>
     <script src="script.js"></script>
 </body>
-
 </html>
