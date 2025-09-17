@@ -9,6 +9,16 @@ function calcularTotal() {
     let cantidad7 = parseInt(document.getElementById("numero7").value) || 0;
     let cantidad8 = parseInt(document.getElementById("numero8").value) || 0;
 
+    // Validar que las cantidades sean positivas o cero
+    if (cantidad1 < 0) { document.getElementById("numero1").value = 0; cantidad1 = 0; }
+    if (cantidad2 < 0) { document.getElementById("numero2").value = 0; cantidad2 = 0; }
+    if (cantidad3 < 0) { document.getElementById("numero3").value = 0; cantidad3 = 0; }
+    if (cantidad4 < 0) { document.getElementById("numero4").value = 0; cantidad4 = 0; }
+    if (cantidad5 < 0) { document.getElementById("numero5").value = 0; cantidad5 = 0; }
+    if (cantidad6 < 0) { document.getElementById("numero6").value = 0; cantidad6 = 0; }
+    if (cantidad7 < 0) { document.getElementById("numero7").value = 0; cantidad7 = 0; }
+    if (cantidad8 < 0) { document.getElementById("numero8").value = 0; cantidad8 = 0; }
+
     // Calcular el total para cada tipo de moneda
     let total1 = cantidad1 * 2;
     let total2 = cantidad2 * 1;
