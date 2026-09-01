@@ -1,47 +1,181 @@
+
+/* =========================
+   DENOMINACIONES
+========================= */
+
+const billetes = {
+    billete500: 500,
+    billete200: 200,
+    billete100: 100,
+    billete50: 50,
+    billete20: 20,
+    billete10: 10,
+    billete5: 5
+};
+
+
+const monedas = {
+    moneda2: 2,
+    moneda1: 1,
+    moneda050: 0.50,
+    moneda020: 0.20,
+    moneda010: 0.10,
+    moneda005: 0.05,
+    moneda002: 0.02,
+    moneda001: 0.01
+};
+
+
+/* =========================
+   CALCULAR TOTAL
+========================= */
+
 function calcularTotal() {
-    // Obtener la cantidad de cada moneda
-    let cantidad1 = parseInt(document.getElementById("numero1").value) || 0;
-    let cantidad2 = parseInt(document.getElementById("numero2").value) || 0;
-    let cantidad3 = parseInt(document.getElementById("numero3").value) || 0;
-    let cantidad4 = parseInt(document.getElementById("numero4").value) || 0;
-    let cantidad5 = parseInt(document.getElementById("numero5").value) || 0;
-    let cantidad6 = parseInt(document.getElementById("numero6").value) || 0;
-    let cantidad7 = parseInt(document.getElementById("numero7").value) || 0;
-    let cantidad8 = parseInt(document.getElementById("numero8").value) || 0;
 
-    // Validar que las cantidades sean positivas o cero
-    if (cantidad1 < 0) { document.getElementById("numero1").value = 0; cantidad1 = 0; }
-    if (cantidad2 < 0) { document.getElementById("numero2").value = 0; cantidad2 = 0; }
-    if (cantidad3 < 0) { document.getElementById("numero3").value = 0; cantidad3 = 0; }
-    if (cantidad4 < 0) { document.getElementById("numero4").value = 0; cantidad4 = 0; }
-    if (cantidad5 < 0) { document.getElementById("numero5").value = 0; cantidad5 = 0; }
-    if (cantidad6 < 0) { document.getElementById("numero6").value = 0; cantidad6 = 0; }
-    if (cantidad7 < 0) { document.getElementById("numero7").value = 0; cantidad7 = 0; }
-    if (cantidad8 < 0) { document.getElementById("numero8").value = 0; cantidad8 = 0; }
+    let totalBilletes = 0;
+    let totalMonedas = 0;
 
-    // Calcular el total para cada tipo de moneda
-    let total1 = cantidad1 * 2;
-    let total2 = cantidad2 * 1;
-    let total3 = cantidad3 * 0.5;
-    let total4 = cantidad4 * 0.2;
-    let total5 = cantidad5 * 0.1;
-    let total6 = cantidad6 * 0.05;
-    let total7 = cantidad7 * 0.02;
-    let total8 = cantidad8 * 0.01;
 
-    // Mostrar el total para cada tipo de moneda
-    document.getElementById("resultado1").textContent = total1.toFixed(2);
-    document.getElementById("resultado2").textContent = total2.toFixed(2);
-    document.getElementById("resultado3").textContent = total3.toFixed(2);
-    document.getElementById("resultado4").textContent = total4.toFixed(2);
-    document.getElementById("resultado5").textContent = total5.toFixed(2);
-    document.getElementById("resultado6").textContent = total6.toFixed(2);
-    document.getElementById("resultado7").textContent = total7.toFixed(2);
-    document.getElementById("resultado8").textContent = total8.toFixed(2);
+    /* =====================
+       BILLETES
+    ===================== */
 
-    // Calcular el total general
-    let totalGeneral = total1 + total2 + total3 + total4 + total5 + total6 + total7 + total8;
+    for (const id in billetes) {
 
-    // Mostrar el total general
-    document.getElementById("totalGeneral").textContent = totalGeneral.toFixed(2);
+        const cantidad =
+            Math.max(
+                0,
+                parseInt(document.getElementById(id).value) || 0
+            );
+
+        const valor = billetes[id];
+
+        const total = cantidad * valor;
+
+        totalBilletes += total;
+
+
+        /*
+         * Obtener el ID del resultado
+         * billete500 -> resultado500
+         */
+
+        const resultadoId =
+            id.replace("billete", "resultado");
+
+        document.getElementById(resultadoId)
+            .textContent = total.toFixed(2);
+    }
+
+
+    /* =====================
+       MONEDAS
+    ===================== */
+
+    for (const id in monedas) {
+
+        const cantidad =
+            Math.max(
+                0,
+                parseInt(document.getElementById(id).value) || 0
+            );
+
+        const valor = monedas[id];
+
+        const total = cantidad * valor;
+
+        totalMonedas += total;
+
+
+        /*
+         * moneda050 -> resultado050
+         */
+
+        const resultadoId =
+            id.replace("moneda", "resultado");
+
+        document.getElementById(resultadoId)
+            .textContent = total.toFixed(2);
+    }
+
+
+    /* =====================
+       TOTAL FINAL
+    ===================== */
+
+    const totalGeneral =
+        totalBilletes + totalMonedas;
+
+
+    document.getElementById("totalBilletes")
+        .textContent = totalBilletes.toFixed(2);
+
+    document.getElementById("totalMonedas")
+        .textContent = totalMonedas.toFixed(2);
+
+    document.getElementById("totalGeneral")
+        .textContent = totalGeneral.toFixed(2);
 }
+
+
+/* =========================
+   CAMBIAR PESTAÑA
+========================= */
+
+function mostrarSeccion(seccion) {
+
+    const billetes =
+        document.getElementById("billetes");
+
+    const monedas =
+        document.getElementById("monedas");
+
+    const tabBilletes =
+        document.getElementById("tabBilletes");
+
+    const tabMonedas =
+        document.getElementById("tabMonedas");
+
+
+    if (seccion === "billetes") {
+
+        billetes.classList.add("activa");
+        monedas.classList.remove("activa");
+
+        tabBilletes.classList.add("active");
+        tabMonedas.classList.remove("active");
+
+    } else {
+
+        billetes.classList.remove("activa");
+        monedas.classList.add("activa");
+
+        tabBilletes.classList.remove("active");
+        tabMonedas.classList.add("active");
+    }
+}
+
+
+/* =========================
+   LIMPIAR CONTADOR
+========================= */
+
+function limpiarContador() {
+
+    const inputs =
+        document.querySelectorAll("input");
+
+    inputs.forEach(input => {
+        input.value = 0;
+    });
+
+
+    calcularTotal();
+}
+
+
+/* =========================
+   INICIAR
+========================= */
+
+calcularTotal();

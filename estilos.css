@@ -1,79 +1,442 @@
-/* General Styles */
+
 @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap');
-body {
-    font-family: "Assistant", sans-serif;
-    /* Set a default font family */
-    margin: 0;
-    padding: 0;
+
+
+/* =========================
+   GENERAL
+========================= */
+
+* {
     box-sizing: border-box;
 }
 
-.titulo__caja {
-    background-image: linear-gradient(135deg, #FFCF71 10%, #2376DD 100%);
+body {
+    font-family: "Assistant", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f6f8;
     color: rgb(1, 17, 41);
+}
+
+
+/* =========================
+   TÍTULO
+========================= */
+
+.titulo__caja {
+    background-image: linear-gradient(
+        135deg,
+        #FFCF71 10%,
+        #2376DD 100%
+    );
+
     text-align: center;
-    padding: 6px 0;
-    border: 1px solid rgba(0, 0, 0, 0.484);
+
+    padding: 15px;
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .titulo__text {
     font-weight: 700;
     font-size: 3.5rem;
+    margin: 0;
 }
+
+.titulo__caja p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+
+/* =========================
+   PESTAÑAS
+========================= */
+
+.tabs {
+    display: flex;
+
+    max-width: 700px;
+
+    margin: 25px auto 10px;
+
+    padding: 5px;
+
+    background: white;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.10);
+}
+
+.tab {
+    flex: 1;
+
+    border: none;
+
+    padding: 15px;
+
+    font-family: inherit;
+
+    font-size: 1.2rem;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: rgb(1, 17, 41);
+
+    transition: 0.3s;
+}
+
+.tab:hover {
+    background: #f1f1f1;
+}
+
+.tab.active {
+    background-image: linear-gradient(
+        135deg,
+        #FFCF71 10%,
+        #2376DD 100%
+    );
+}
+
+
+/* =========================
+   SECCIONES
+========================= */
+
+.seccion {
+    display: none;
+
+    max-width: 900px;
+
+    margin: 0 auto;
+
+    padding: 10px 20px 40px;
+
+    animation: aparecer 0.3s ease;
+}
+
+.seccion.activa {
+    display: block;
+}
+
+.seccion h2 {
+    text-align: center;
+
+    font-size: 2rem;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================
+   GRID
+========================= */
 
 .caja__moneda {
     display: grid;
-    grid-template-columns: auto auto;
-    padding: 10px;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 25px;
+
+    justify-items: center;
 }
+
+
+/* =========================
+   CAJA DE CADA MONEDA
+========================= */
 
 .caja__input {
-    width: 80px 80px;
-  
-    padding: 5px;
-    justify-content: center;
+    width: 170px;
+
     text-align: center;
+
+    padding: 10px;
 }
 
-.redonda__moneda{
+
+/* =========================
+   CÍRCULO
+========================= */
+
+.redonda__moneda {
+
     color: rgb(1, 17, 41);
-    background-image: linear-gradient(135deg, #FFCF71 10%, #2376DD 100%);
+
+    background-image: linear-gradient(
+        135deg,
+        #FFCF71 10%,
+        #2376DD 100%
+    );
+
     text-align: center;
+
+    border-radius: 50%;
+
+    width: 75px;
+    height: 75px;
+
+    display: flex;
+
     justify-content: center;
-    border-radius: 50px;
-    width: 62px;
-    height: 62px;
-    display: inline-block;
-    margin: 4px 0 8px;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
-   
+    align-items: center;
+
+    margin: 0 auto 12px;
+
+    box-shadow:
+        rgba(50, 50, 93, 0.25)
+        0px 15px 30px -10px,
+        rgba(0, 0, 0, 0.3)
+        0px 10px 20px -10px;
 }
 
-.input__moneda{
+.redonda__moneda h3 {
+    margin: 0;
+
+    font-size: 1.1rem;
+}
+
+
+/* =========================
+   INPUT
+========================= */
+
+.input__moneda {
+
+    border: 2px solid #ddd;
+
     border-radius: 20px;
-    width: 160px;
-    padding: 5px 0 5px;
+
+    width: 150px;
+
+    padding: 8px;
+
     text-align: center;
-    font-size: large;
+
+    font-size: 1.1rem;
+
+    font-family: inherit;
+
     color: rgb(1, 17, 41);
-    max-width: 300px;
+
     outline: none;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
-    
+
+    transition: 0.2s;
 }
 
-.parrafo__input{
+.input__moneda:focus {
+
+    border-color: #2376DD;
+
+    box-shadow:
+        0 0 0 3px rgba(35, 118, 221, 0.15);
+}
+
+
+/* =========================
+   TEXTO
+========================= */
+
+.parrafo__input {
+
     color: rgb(1, 17, 41);
-    font-size: 10px;
-    margin: 5px 0;
+
+    font-size: 0.9rem;
+
+    margin: 7px 0;
+
     padding: 0;
 }
 
-.parrafo__total{
-    color: rgb(1, 17, 41);
-    margin-left: 10px;
-    font-size: 1.6rem;
+
+/* =========================
+   RESUMEN
+========================= */
+
+.resumen {
+
+    max-width: 500px;
+
+    margin: 30px auto;
+
+    padding: 20px;
+
+    background: white;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.1);
+
+    text-align: center;
+}
+
+.resumen p {
+    font-size: 1.1rem;
+
+    margin: 8px;
+}
+
+.total-final {
+
+    margin-top: 15px;
+
+    padding-top: 15px;
+
+    border-top: 2px solid #ddd;
+
+    font-size: 2rem;
+
+    font-weight: 800;
+}
+
+
+/* =========================
+   BOTÓN LIMPIAR
+========================= */
+
+.btn-limpiar {
+
+    display: block;
+
+    margin: 20px auto;
+
+    padding: 12px 25px;
+
+    border: none;
+
+    border-radius: 25px;
+
+    background: #111;
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 1rem;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.btn-limpiar:hover {
+
+    transform: scale(1.05);
+
+    background: #333;
+}
+
+
+/* =========================
+   ANIMACIÓN
+========================= */
+
+@keyframes aparecer {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 700px) {
+
+    .caja__moneda {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .titulo__text {
+        font-size: 2.5rem;
+    }
+
+}
+
+
+/* =========================
+   MÓVIL
+========================= */
+
+@media (max-width: 400px) {
+
+    .caja__moneda {
+        grid-template-columns: 1fr;
+    }
+
+    .titulo__text {
+        font-size: 2rem;
+    }
+
+    .caja__input {
+        width: 100%;
+
+    }
+}   
+@media (max-width: 600px) {
+
+    .titulo__text {
+        font-size: 2.5rem;
+    }
+
+    .seccion {
+        padding: 10px 10px 30px;
+    }
+
+    .caja__moneda {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px 5px;
+    }
+
+    .caja__input {
+        width: 100%;
+        padding: 8px 2px;
+    }
+
+    .redonda__moneda {
+        width: 65px;
+        height: 65px;
+    }
+
+    .redonda__moneda h3 {
+        font-size: 1rem;
+    }
+
+    .input__moneda {
+        width: 130px;
+        max-width: 90%;
+        font-size: 1rem;
+    }
+
+    .parrafo__input {
+        font-size: 0.8rem;
+    }
+
+    .resumen {
+        width: 95%;
+    }
+
+    .total-final {
+        font-size: 1.7rem;
+    }
+
 }

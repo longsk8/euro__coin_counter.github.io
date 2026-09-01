@@ -1,87 +1,371 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="estilos.css">
-    <title>Coin Counter</title>
+
+    <title>Euro Counter</title>
 </head>
 
 <body>
+
     <main class="main">
-        <div class="titulo__caja">
-            <h1 class="titulo__text">Coin Counter</h1>
-        </div>
 
-        <section class="caja__moneda">
-            <div class="caja__input">
-                <div class="redonda__moneda">
-                    <h3 class="titulo__moneda">2€</h3>
+        <!-- TÍTULO -->
+        <header class="titulo__caja">
+            <h1 class="titulo__text">Euro Counter</h1>
+            <p>Cuenta tus billetes y monedas fácilmente</p>
+        </header>
+
+
+        <!-- PESTAÑAS -->
+        <nav class="tabs">
+
+            <button class="tab active" id="tabBilletes" onclick="mostrarSeccion('billetes')">
+                💶 Billetes
+            </button>
+
+            <button class="tab" id="tabMonedas" onclick="mostrarSeccion('monedas')">
+                🪙 Monedas
+            </button>
+
+        </nav>
+
+
+        <!-- ========================= -->
+        <!-- BILLETES -->
+        <!-- ========================= -->
+
+        <section id="billetes" class="seccion">
+
+            <h2>Billetes</h2>
+
+            <div class="caja__moneda">
+
+                <!-- 500 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>500€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="billete500" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado500">0.00</span>€
+                    </p>
+
                 </div>
-                <input class="input__moneda" type="number" id="numero1" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
-                <p class="parrafo__input">total = <span id="resultado1">0</span>€</p>
+
+
+                <!-- 200 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>200€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="billete200" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado200">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 100 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>100€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="billete100" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado100">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 50 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>50€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="billete50" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado50">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 20 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>20€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="billete20" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado20">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 10 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>10€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="billete10" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado10">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 5 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>5€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="billete5" min="0" step="1" oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado5">0.00</span>€
+                    </p>
+
+                </div>
+
             </div>
 
-            <div class="caja__input">
-                <div class="redonda__moneda">
-                    <h3 class="titulo__moneda">1€</h3>
-                </div>
-                <input class="input__moneda" type="number" id="numero2" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
-                <p class="parrafo__input">total = <span id="resultado2">0</span>€</p>
-            </div>
-
-            <div class="caja__input">
-                <div class="redonda__moneda">
-                    <h3 class="titulo__moneda">0.50€</h3>
-                </div>
-                <input class="input__moneda" type="number" id="numero3" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
-                <p class="parrafo__input">total = <span id="resultado3">0</span>€</p>
-            </div>
-
-            <div class="caja__input">
-                <div class="redonda__moneda">
-                    <h3 class="titulo__moneda">0.20€</h3>
-                </div>
-                <input class="input__moneda" type="number" id="numero4" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
-                <p class="parrafo__input">total = <span id="resultado4">0</span>€</p>
-            </div>
-
-            <div class="caja__input">
-                <div class="redonda__moneda">
-                    <h3 class="titulo__moneda">0.10€</h3>
-                </div>
-                <input class="input__moneda" type="number" id="numero5" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
-                <p class="parrafo__input">total = <span id="resultado5">0</span>€</p>
-            </div>
-
-            <div class="caja__input">
-                <div class="redonda__moneda">
-                    <h3 class="titulo__moneda">0.05€</h3>
-                </div>
-                <input class="input__moneda" type="number" id="numero6" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
-                <p class="parrafo__input">total = <span id="resultado6">0</span>€</p>
-            </div>
-
-            <div class="caja__input">
-                <div class="redonda__moneda">
-                    <h3 class="titulo__moneda">0.02€</h3>
-                </div>
-                <input class="input__moneda" type="number" id="numero7" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
-                <p class="parrafo__input">total = <span id="resultado7">0</span>€</p>
-            </div>
-
-            <div class="caja__input">
-                <div class="redonda__moneda">
-                    <h3 class="titulo__moneda">0.01€</h3>
-                </div>
-                <input class="input__moneda" type="number" id="numero8" min="0" step="1" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)">
-                <p class="parrafo__input">total = <span id="resultado8">0</span>€</p>
-            </div>
-
-            <h2 class="parrafo__total">Total: <span id="totalGeneral">0</span>€</h2>
         </section>
+
+
+        <!-- ========================= -->
+        <!-- MONEDAS -->
+        <!-- ========================= -->
+
+        <section id="monedas" class="seccion activa">
+
+            <h2>Monedas</h2>
+
+            <div class="caja__moneda">
+
+                <!-- 2€ -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>2€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="moneda2" min="0" step="1" oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado2">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 1€ -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>1€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="moneda1" min="0" step="1" oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado1">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 50 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>0.50€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="moneda050" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado050">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 20 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>0.20€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="moneda020" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado020">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 10 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>0.10€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="moneda010" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado010">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 5 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>0.05€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="moneda005" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado005">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 2 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>0.02€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="moneda002" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado002">0.00</span>€
+                    </p>
+
+                </div>
+
+
+                <!-- 1 -->
+                <div class="caja__input">
+
+                    <div class="redonda__moneda">
+                        <h3>0.01€</h3>
+                    </div>
+
+                    <input class="input__moneda" type="number" id="moneda001" min="0" step="1"
+                        oninput="calcularTotal()">
+
+                    <p class="parrafo__input">
+                        Total =
+                        <span id="resultado001">0.00</span>€
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESUMEN FINAL -->
+
+            <div class="resumen">
+
+                <p>
+                    Total billetes:
+                    <strong>
+                        <span id="totalBilletes">0.00</span>€
+                    </strong>
+                </p>
+
+                <p>
+                    Total monedas:
+                    <strong>
+                        <span id="totalMonedas">0.00</span>€
+                    </strong>
+                </p>
+
+                <div class="total-final">
+                    TOTAL:
+                    <span id="totalGeneral">0.00</span>€
+                </div>
+
+            </div>
+
+
+            <!-- BOTÓN LIMPIAR -->
+
+            <button class="btn-limpiar" onclick="limpiarContador()">
+                Limpiar contador
+            </button>
+
+        </section>
+
     </main>
+
     <script src="script.js"></script>
+
 </body>
+
 </html>
