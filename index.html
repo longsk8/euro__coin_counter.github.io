@@ -4,368 +4,696 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="estilos.css">
-
-    <title>Euro Counter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilo.css">
+    <title>CajaFlow</title>
 </head>
 
 <body>
+    <header class="cabecera">
+        <div class="cabecera__interior">
+            <div class="cabecera__texto">
+                <p class="cabecera__etiqueta">Control de caja</p>
+                <div class="cabecera__marca">
+                    <span class="cabecera__logo" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" class="cabecera__logo-icono">
+                            <path d="M4 10.5 6.5 5h11L20 10.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                            <rect x="3.5" y="10.5" width="17" height="8.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                            <path d="M9.5 14.5h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    <h1 class="cabecera__titulo">CajaFlow</h1>
+                </div>
+                <p class="cabecera__sub">Cierres de caja simples para pequeños negocios.</p>
+            </div>
+            <div class="cabecera__fecha">
+                <span class="cabecera__fecha-etiqueta">Fecha de cierre</span>
+                <span class="cabecera__fecha-valor">
+                    <svg class="cabecera__fecha-icono" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                        <rect x="3" y="4.5" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                        <path d="M3 8h14" stroke="currentColor" stroke-width="1.4"/>
+                        <path d="M6.5 3v3M13.5 3v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    </svg>
+                    <span id="fechaCierre">—</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <nav class="pasos" id="pasos" aria-label="Progreso del cierre">
+        <a class="pasos__paso" href="#pasoEfectivo" data-paso="efectivo">
+            <span class="pasos__numero">1</span>
+            <span class="pasos__etiqueta">Efectivo</span>
+        </a>
+        <a class="pasos__paso" href="#seccionDatos" data-paso="datos">
+            <span class="pasos__numero">2</span>
+            <span class="pasos__etiqueta">Datos</span>
+        </a>
+        <a class="pasos__paso" href="#seccionResumen" data-paso="resumen">
+            <span class="pasos__numero">3</span>
+            <span class="pasos__etiqueta">Resultado</span>
+        </a>
+    </nav>
 
     <main class="main">
+        <p class="main__intro">Sigue estos pasos para cerrar la caja: cuenta el efectivo, completa los datos del día y revisa el resultado.</p>
 
-        <!-- TÍTULO -->
-        <header class="titulo__caja">
-            <h1 class="titulo__text">Euro Counter</h1>
-            <p>Cuenta tus billetes y monedas fácilmente</p>
-        </header>
+        <h2 class="seccion__titulo" id="pasoEfectivo">1. Contar efectivo</h2>
 
-
-        <!-- PESTAÑAS -->
-        <nav class="tabs">
-
-            <button class="tab active" id="tabBilletes" onclick="mostrarSeccion('billetes')">
-                💶 Billetes
+        <div class="selector" id="selector" role="tablist" aria-label="Tipo de dinero">
+            <button class="selector__opcion is-activa" id="tabMonedas" role="tab" aria-selected="true" aria-controls="panelMonedas" onclick="mostrarPanel('monedas')">
+                <span class="selector__icono selector__icono--moneda"></span>
+                Monedas
             </button>
-
-            <button class="tab" id="tabMonedas" onclick="mostrarSeccion('monedas')">
-                🪙 Monedas
+            <button class="selector__opcion" id="tabBilletes" role="tab" aria-selected="false" aria-controls="panelBilletes" onclick="mostrarPanel('billetes')">
+                <span class="selector__icono selector__icono--billete"></span>
+                Billetes
             </button>
+            <span class="selector__realce" id="realceSelector" aria-hidden="true"></span>
+        </div>
 
-        </nav>
-
-
-        <!-- ========================= -->
-        <!-- BILLETES -->
-        <!-- ========================= -->
-
-        <section id="billetes" class="seccion activa">
-
-            <h2>Billetes</h2>
-
-            <div class="caja__moneda">
-
-                <!-- 500 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>500€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="billete500" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado500">0.00</span>€
-                    </p>
-
+        <section class="panel" id="panelMonedas" role="tabpanel" aria-labelledby="tabMonedas">
+            <div class="rejilla">
+                <div class="pieza">
+                    <span class="visualmente-oculto">Moneda de 2 euros</span>
+                    <svg class="moneda moneda--2e" viewBox="0 0 100 100" aria-hidden="true">
+                        <defs>
+                            <radialGradient id="anillo-2e" cx="35%" cy="28%" r="80%">
+                                <stop offset="0%" stop-color="var(--claro)"/><stop offset="100%" stop-color="var(--oscuro)"/>
+                            </radialGradient>
+                            <radialGradient id="centro-2e" cx="35%" cy="28%" r="80%">
+                                <stop offset="0%" stop-color="var(--claro2)"/><stop offset="100%" stop-color="var(--oscuro2)"/>
+                            </radialGradient>
+                            <clipPath id="clip-2e"><circle cx="50" cy="50" r="44"/></clipPath>
+                            <pattern id="rayado-2e" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+                                <line x1="0" y1="0" x2="0" y2="5" stroke="var(--oscuro)" stroke-width="1"/>
+                            </pattern>
+                            <path id="arco-2e" d="M14.3,37 A38,38 0 0 1 85.7,37" fill="none"/>
+                        </defs>
+                        <circle cx="50" cy="50" r="44" fill="url(#anillo-2e)" stroke="var(--borde)" stroke-width="2"/>
+                        <g clip-path="url(#clip-2e)"><rect x="0" y="58" width="100" height="42" fill="url(#rayado-2e)" opacity="0.25"/></g>
+                        <circle cx="50" cy="50" r="26" fill="url(#centro-2e)" stroke="var(--borde2)" stroke-width="1.4"/>
+                        <text class="moneda__arco"><textPath href="#arco-2e" startOffset="50%" text-anchor="middle">EURO</textPath></text>
+                        <text class="moneda__numero-sombra" x="51" y="53" text-anchor="middle" dominant-baseline="middle">2</text>
+                        <text class="moneda__numero" x="50" y="51" text-anchor="middle" dominant-baseline="middle">2</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="numero1" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 2 euros">
+                    <p class="pieza__subtotal"><span id="resultado1">0.00</span>€</p>
                 </div>
 
-
-                <!-- 200 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>200€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="billete200" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado200">0.00</span>€
-                    </p>
-
+                <div class="pieza">
+                    <span class="visualmente-oculto">Moneda de 1 euro</span>
+                    <svg class="moneda moneda--1e" viewBox="0 0 100 100" aria-hidden="true">
+                        <defs>
+                            <radialGradient id="anillo-1e" cx="35%" cy="28%" r="80%">
+                                <stop offset="0%" stop-color="var(--claro)"/><stop offset="100%" stop-color="var(--oscuro)"/>
+                            </radialGradient>
+                            <radialGradient id="centro-1e" cx="35%" cy="28%" r="80%">
+                                <stop offset="0%" stop-color="var(--claro2)"/><stop offset="100%" stop-color="var(--oscuro2)"/>
+                            </radialGradient>
+                            <clipPath id="clip-1e"><circle cx="50" cy="50" r="44"/></clipPath>
+                            <pattern id="rayado-1e" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+                                <line x1="0" y1="0" x2="0" y2="5" stroke="var(--oscuro)" stroke-width="1"/>
+                            </pattern>
+                            <path id="arco-1e" d="M14.3,37 A38,38 0 0 1 85.7,37" fill="none"/>
+                        </defs>
+                        <circle cx="50" cy="50" r="44" fill="url(#anillo-1e)" stroke="var(--borde)" stroke-width="2"/>
+                        <g clip-path="url(#clip-1e)"><rect x="0" y="58" width="100" height="42" fill="url(#rayado-1e)" opacity="0.25"/></g>
+                        <circle cx="50" cy="50" r="26" fill="url(#centro-1e)" stroke="var(--borde2)" stroke-width="1.4"/>
+                        <text class="moneda__arco"><textPath href="#arco-1e" startOffset="50%" text-anchor="middle">EURO</textPath></text>
+                        <text class="moneda__numero-sombra" x="51" y="53" text-anchor="middle" dominant-baseline="middle">1</text>
+                        <text class="moneda__numero" x="50" y="51" text-anchor="middle" dominant-baseline="middle">1</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="numero2" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 1 euro">
+                    <p class="pieza__subtotal"><span id="resultado2">0.00</span>€</p>
                 </div>
 
-
-                <!-- 100 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>100€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="billete100" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado100">0.00</span>€
-                    </p>
-
+                <div class="pieza">
+                    <span class="visualmente-oculto">Moneda de 50 céntimos</span>
+                    <svg class="moneda moneda--50c" viewBox="0 0 100 100" aria-hidden="true">
+                        <defs>
+                            <radialGradient id="metal-50c" cx="35%" cy="28%" r="80%">
+                                <stop offset="0%" stop-color="var(--claro)"/><stop offset="100%" stop-color="var(--oscuro)"/>
+                            </radialGradient>
+                            <clipPath id="clip-50c"><circle cx="50" cy="50" r="44"/></clipPath>
+                            <pattern id="rayado-50c" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+                                <line x1="0" y1="0" x2="0" y2="5" stroke="var(--oscuro)" stroke-width="1"/>
+                            </pattern>
+                            <path id="arco-50c" d="M14.3,37 A38,38 0 0 1 85.7,37" fill="none"/>
+                        </defs>
+                        <circle cx="50" cy="50" r="44" fill="url(#metal-50c)" stroke="var(--borde)" stroke-width="2"/>
+                        <g clip-path="url(#clip-50c)"><rect x="0" y="58" width="100" height="42" fill="url(#rayado-50c)" opacity="0.25"/></g>
+                        <text class="moneda__arco"><textPath href="#arco-50c" startOffset="50%" text-anchor="middle">EURO CENT</textPath></text>
+                        <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">50</text>
+                        <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">50</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="numero3" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 50 céntimos">
+                    <p class="pieza__subtotal"><span id="resultado3">0.00</span>€</p>
                 </div>
 
-
-                <!-- 50 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>50€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="billete50" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado50">0.00</span>€
-                    </p>
-
+                <div class="pieza">
+                    <span class="visualmente-oculto">Moneda de 20 céntimos</span>
+                    <svg class="moneda moneda--20c" viewBox="0 0 100 100" aria-hidden="true">
+                        <defs>
+                            <radialGradient id="metal-20c" cx="35%" cy="28%" r="80%">
+                                <stop offset="0%" stop-color="var(--claro)"/><stop offset="100%" stop-color="var(--oscuro)"/>
+                            </radialGradient>
+                            <clipPath id="clip-20c"><circle cx="50" cy="50" r="44"/></clipPath>
+                            <pattern id="rayado-20c" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+                                <line x1="0" y1="0" x2="0" y2="5" stroke="var(--oscuro)" stroke-width="1"/>
+                            </pattern>
+                            <path id="arco-20c" d="M14.3,37 A38,38 0 0 1 85.7,37" fill="none"/>
+                        </defs>
+                        <circle cx="50" cy="50" r="44" fill="url(#metal-20c)" stroke="var(--borde)" stroke-width="2"/>
+                        <g clip-path="url(#clip-20c)"><rect x="0" y="58" width="100" height="42" fill="url(#rayado-20c)" opacity="0.25"/></g>
+                        <text class="moneda__arco"><textPath href="#arco-20c" startOffset="50%" text-anchor="middle">EURO CENT</textPath></text>
+                        <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">20</text>
+                        <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">20</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="numero4" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 20 céntimos">
+                    <p class="pieza__subtotal"><span id="resultado4">0.00</span>€</p>
                 </div>
 
-
-                <!-- 20 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>20€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="billete20" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado20">0.00</span>€
-                    </p>
-
+                <div class="pieza">
+                    <span class="visualmente-oculto">Moneda de 10 céntimos</span>
+                    <svg class="moneda moneda--10c" viewBox="0 0 100 100" aria-hidden="true">
+                        <defs>
+                            <radialGradient id="metal-10c" cx="35%" cy="28%" r="80%">
+                                <stop offset="0%" stop-color="var(--claro)"/><stop offset="100%" stop-color="var(--oscuro)"/>
+                            </radialGradient>
+                            <clipPath id="clip-10c"><circle cx="50" cy="50" r="44"/></clipPath>
+                            <pattern id="rayado-10c" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+                                <line x1="0" y1="0" x2="0" y2="5" stroke="var(--oscuro)" stroke-width="1"/>
+                            </pattern>
+                            <path id="arco-10c" d="M14.3,37 A38,38 0 0 1 85.7,37" fill="none"/>
+                        </defs>
+                        <circle cx="50" cy="50" r="44" fill="url(#metal-10c)" stroke="var(--borde)" stroke-width="2"/>
+                        <g clip-path="url(#clip-10c)"><rect x="0" y="58" width="100" height="42" fill="url(#rayado-10c)" opacity="0.25"/></g>
+                        <text class="moneda__arco"><textPath href="#arco-10c" startOffset="50%" text-anchor="middle">EURO CENT</textPath></text>
+                        <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">10</text>
+                        <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">10</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="numero5" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 10 céntimos">
+                    <p class="pieza__subtotal"><span id="resultado5">0.00</span>€</p>
                 </div>
 
-
-                <!-- 10 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>10€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="billete10" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado10">0.00</span>€
-                    </p>
-
+                <div class="pieza">
+                    <span class="visualmente-oculto">Moneda de 5 céntimos</span>
+                    <svg class="moneda moneda--5c" viewBox="0 0 100 100" aria-hidden="true">
+                        <defs>
+                            <radialGradient id="metal-5c" cx="35%" cy="28%" r="80%">
+                                <stop offset="0%" stop-color="var(--claro)"/><stop offset="100%" stop-color="var(--oscuro)"/>
+                            </radialGradient>
+                            <clipPath id="clip-5c"><circle cx="50" cy="50" r="44"/></clipPath>
+                            <pattern id="rayado-5c" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+                                <line x1="0" y1="0" x2="0" y2="5" stroke="var(--oscuro)" stroke-width="1"/>
+                            </pattern>
+                            <path id="arco-5c" d="M14.3,37 A38,38 0 0 1 85.7,37" fill="none"/>
+                        </defs>
+                        <circle cx="50" cy="50" r="44" fill="url(#metal-5c)" stroke="var(--borde)" stroke-width="2"/>
+                        <g clip-path="url(#clip-5c)"><rect x="0" y="58" width="100" height="42" fill="url(#rayado-5c)" opacity="0.25"/></g>
+                        <text class="moneda__arco"><textPath href="#arco-5c" startOffset="50%" text-anchor="middle">EURO CENT</textPath></text>
+                        <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">5</text>
+                        <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">5</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="numero6" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 5 céntimos">
+                    <p class="pieza__subtotal"><span id="resultado6">0.00</span>€</p>
                 </div>
 
-
-                <!-- 5 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>5€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="billete5" min="0" step="1" oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado5">0.00</span>€
-                    </p>
-
+                <div class="pieza">
+                    <span class="visualmente-oculto">Moneda de 2 céntimos</span>
+                    <svg class="moneda moneda--2c" viewBox="0 0 100 100" aria-hidden="true">
+                        <defs>
+                            <radialGradient id="metal-2c" cx="35%" cy="28%" r="80%">
+                                <stop offset="0%" stop-color="var(--claro)"/><stop offset="100%" stop-color="var(--oscuro)"/>
+                            </radialGradient>
+                            <clipPath id="clip-2c"><circle cx="50" cy="50" r="44"/></clipPath>
+                            <pattern id="rayado-2c" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+                                <line x1="0" y1="0" x2="0" y2="5" stroke="var(--oscuro)" stroke-width="1"/>
+                            </pattern>
+                            <path id="arco-2c" d="M14.3,37 A38,38 0 0 1 85.7,37" fill="none"/>
+                        </defs>
+                        <circle cx="50" cy="50" r="44" fill="url(#metal-2c)" stroke="var(--borde)" stroke-width="2"/>
+                        <g clip-path="url(#clip-2c)"><rect x="0" y="58" width="100" height="42" fill="url(#rayado-2c)" opacity="0.25"/></g>
+                        <text class="moneda__arco"><textPath href="#arco-2c" startOffset="50%" text-anchor="middle">EURO CENT</textPath></text>
+                        <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">2</text>
+                        <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">2</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="numero7" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 2 céntimos">
+                    <p class="pieza__subtotal"><span id="resultado7">0.00</span>€</p>
                 </div>
 
+                <div class="pieza">
+                    <span class="visualmente-oculto">Moneda de 1 céntimo</span>
+                    <svg class="moneda moneda--1c" viewBox="0 0 100 100" aria-hidden="true">
+                        <defs>
+                            <radialGradient id="metal-1c" cx="35%" cy="28%" r="80%">
+                                <stop offset="0%" stop-color="var(--claro)"/><stop offset="100%" stop-color="var(--oscuro)"/>
+                            </radialGradient>
+                            <clipPath id="clip-1c"><circle cx="50" cy="50" r="44"/></clipPath>
+                            <pattern id="rayado-1c" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+                                <line x1="0" y1="0" x2="0" y2="5" stroke="var(--oscuro)" stroke-width="1"/>
+                            </pattern>
+                            <path id="arco-1c" d="M14.3,37 A38,38 0 0 1 85.7,37" fill="none"/>
+                        </defs>
+                        <circle cx="50" cy="50" r="44" fill="url(#metal-1c)" stroke="var(--borde)" stroke-width="2"/>
+                        <g clip-path="url(#clip-1c)"><rect x="0" y="58" width="100" height="42" fill="url(#rayado-1c)" opacity="0.25"/></g>
+                        <text class="moneda__arco"><textPath href="#arco-1c" startOffset="50%" text-anchor="middle">EURO CENT</textPath></text>
+                        <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">1</text>
+                        <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">1</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="numero8" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 1 céntimo">
+                    <p class="pieza__subtotal"><span id="resultado8">0.00</span>€</p>
+                </div>
             </div>
-
+            <p class="panel__subtotal">Subtotal en monedas: <span id="subtotalMonedas">0.00</span>€</p>
         </section>
 
-
-        <!-- ========================= -->
-        <!-- MONEDAS -->
-        <!-- ========================= -->
-
-        <section id="monedas" class="seccion ">
-
-            <h2>Monedas</h2>
-
-            <div class="caja__moneda">
-
-                <!-- 2€ -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>2€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="moneda2" min="0" step="1" oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado2">0.00</span>€
-                    </p>
-
+        <section class="panel is-oculto" id="panelBilletes" role="tabpanel" aria-labelledby="tabBilletes">
+            <div class="rejilla rejilla--billetes">
+                <div class="pieza pieza--billete">
+                    <span class="visualmente-oculto">Billete de 200 euros</span>
+                    <svg class="billete billete--200" viewBox="0 0 200 112" aria-hidden="true">
+                        <rect class="billete__base" x="1" y="1" width="198" height="110" rx="12"/>
+                        <rect class="billete__franja" x="0" y="0" width="13" height="112"/>
+                        <rect class="billete__franja billete__franja--clara" x="13" y="0" width="6" height="112"/>
+                        <rect class="billete__holograma" x="178" y="28" width="14" height="56" rx="6"/>
+                        <circle class="billete__mancha" cx="140" cy="56" r="50"/>
+                        <rect class="billete__bandera" x="26" y="16" width="26" height="18" rx="4"/>
+                        <circle class="billete__bandera-anillo" cx="39" cy="25" r="6"/>
+                        <path class="billete__firma" d="M26 42 q6 -6 12 0 t12 0 t12 0"/>
+                        <g class="billete__estrellas">
+                            <path d="M112 15 l1.6 3.4 3.7 0.5 -2.7 2.6 0.6 3.7 -3.2 -1.7 -3.2 1.7 0.6 -3.7 -2.7 -2.6 3.7 -0.5 Z"/>
+                            <path d="M64 70 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                            <path d="M150 22 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                        </g>
+                        <g class="billete__edificio" transform="translate(92,16)">
+                            <rect x="4" y="6" width="40" height="46" rx="3"/>
+                            <g class="billete__edificio-luz">
+                                <rect x="9" y="12" width="8" height="8"/><rect x="20" y="12" width="8" height="8"/><rect x="31" y="12" width="8" height="8"/>
+                                <rect x="9" y="24" width="8" height="8"/><rect x="20" y="24" width="8" height="8"/><rect x="31" y="24" width="8" height="8"/>
+                                <rect x="9" y="36" width="8" height="8"/><rect x="20" y="36" width="8" height="8"/><rect x="31" y="36" width="8" height="8"/>
+                            </g>
+                        </g>
+                        <circle class="billete__chip-anillo" cx="176" cy="90" r="11"/>
+                        <path class="billete__chip-rayo" d="M173 85 l-3 6 h3 l-1 5 5 -7 h-3 z"/>
+                        <text class="billete__numero" x="28" y="60">200</text>
+                        <text class="billete__numero-esquina" x="28" y="92">200</text>
+                        <text class="billete__eur" x="95" y="98">EUR</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="billete1" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 200 euros">
+                    <p class="pieza__subtotal"><span id="resultadoB1">0.00</span>€</p>
                 </div>
 
-
-                <!-- 1€ -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>1€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="moneda1" min="0" step="1" oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado1">0.00</span>€
-                    </p>
-
+                <div class="pieza pieza--billete">
+                    <span class="visualmente-oculto">Billete de 100 euros</span>
+                    <svg class="billete billete--100" viewBox="0 0 200 112" aria-hidden="true">
+                        <rect class="billete__base" x="1" y="1" width="198" height="110" rx="12"/>
+                        <rect class="billete__franja" x="0" y="0" width="13" height="112"/>
+                        <rect class="billete__franja billete__franja--clara" x="13" y="0" width="6" height="112"/>
+                        <rect class="billete__holograma" x="178" y="28" width="14" height="56" rx="6"/>
+                        <circle class="billete__mancha" cx="140" cy="56" r="50"/>
+                        <rect class="billete__bandera" x="26" y="16" width="26" height="18" rx="4"/>
+                        <circle class="billete__bandera-anillo" cx="39" cy="25" r="6"/>
+                        <path class="billete__firma" d="M26 42 q6 -6 12 0 t12 0 t12 0"/>
+                        <g class="billete__estrellas">
+                            <path d="M112 15 l1.6 3.4 3.7 0.5 -2.7 2.6 0.6 3.7 -3.2 -1.7 -3.2 1.7 0.6 -3.7 -2.7 -2.6 3.7 -0.5 Z"/>
+                            <path d="M64 70 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                            <path d="M150 22 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                        </g>
+                        <g class="billete__edificio" transform="translate(96,14)">
+                            <path d="M22 0 a8 8 0 0 1 8 8 h-16 a8 8 0 0 1 8 -8 Z"/>
+                            <rect x="10" y="10" width="24" height="46" rx="2"/>
+                            <circle class="billete__edificio-luz" cx="22" cy="26" r="6"/>
+                            <rect class="billete__edificio-luz" x="16" y="40" width="4" height="16"/>
+                            <rect class="billete__edificio-luz" x="24" y="40" width="4" height="16"/>
+                        </g>
+                        <circle class="billete__chip-anillo" cx="176" cy="90" r="11"/>
+                        <path class="billete__chip-rayo" d="M173 85 l-3 6 h3 l-1 5 5 -7 h-3 z"/>
+                        <text class="billete__numero" x="28" y="60">100</text>
+                        <text class="billete__numero-esquina" x="28" y="92">100</text>
+                        <text class="billete__eur" x="95" y="98">EUR</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="billete2" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 100 euros">
+                    <p class="pieza__subtotal"><span id="resultadoB2">0.00</span>€</p>
                 </div>
 
-
-                <!-- 50 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>0.50€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="moneda050" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado050">0.00</span>€
-                    </p>
-
+                <div class="pieza pieza--billete">
+                    <span class="visualmente-oculto">Billete de 50 euros</span>
+                    <svg class="billete billete--50" viewBox="0 0 200 112" aria-hidden="true">
+                        <rect class="billete__base" x="1" y="1" width="198" height="110" rx="12"/>
+                        <rect class="billete__franja" x="0" y="0" width="13" height="112"/>
+                        <rect class="billete__franja billete__franja--clara" x="13" y="0" width="6" height="112"/>
+                        <rect class="billete__holograma" x="178" y="28" width="14" height="56" rx="6"/>
+                        <circle class="billete__mancha" cx="140" cy="56" r="50"/>
+                        <rect class="billete__bandera" x="26" y="16" width="26" height="18" rx="4"/>
+                        <circle class="billete__bandera-anillo" cx="39" cy="25" r="6"/>
+                        <path class="billete__firma" d="M26 42 q6 -6 12 0 t12 0 t12 0"/>
+                        <g class="billete__estrellas">
+                            <path d="M112 15 l1.6 3.4 3.7 0.5 -2.7 2.6 0.6 3.7 -3.2 -1.7 -3.2 1.7 0.6 -3.7 -2.7 -2.6 3.7 -0.5 Z"/>
+                            <path d="M64 70 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                            <path d="M150 22 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                        </g>
+                        <g class="billete__edificio" transform="translate(96,20)">
+                            <path d="M20 0 L38 14 H2 Z"/>
+                            <rect x="6" y="14" width="28" height="40" rx="2"/>
+                            <rect class="billete__edificio-luz" x="12" y="24" width="4" height="24"/>
+                            <rect class="billete__edificio-luz" x="18" y="24" width="4" height="24"/>
+                            <rect class="billete__edificio-luz" x="24" y="24" width="4" height="24"/>
+                        </g>
+                        <circle class="billete__chip-anillo" cx="176" cy="90" r="11"/>
+                        <path class="billete__chip-rayo" d="M173 85 l-3 6 h3 l-1 5 5 -7 h-3 z"/>
+                        <text class="billete__numero" x="28" y="60">50</text>
+                        <text class="billete__numero-esquina" x="28" y="92">50</text>
+                        <text class="billete__eur" x="95" y="98">EUR</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="billete3" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 50 euros">
+                    <p class="pieza__subtotal"><span id="resultadoB3">0.00</span>€</p>
                 </div>
 
-
-                <!-- 20 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>0.20€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="moneda020" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado020">0.00</span>€
-                    </p>
-
+                <div class="pieza pieza--billete">
+                    <span class="visualmente-oculto">Billete de 20 euros</span>
+                    <svg class="billete billete--20" viewBox="0 0 200 112" aria-hidden="true">
+                        <rect class="billete__base" x="1" y="1" width="198" height="110" rx="12"/>
+                        <rect class="billete__franja" x="0" y="0" width="13" height="112"/>
+                        <rect class="billete__franja billete__franja--clara" x="13" y="0" width="6" height="112"/>
+                        <rect class="billete__holograma" x="178" y="28" width="14" height="56" rx="6"/>
+                        <circle class="billete__mancha" cx="140" cy="56" r="50"/>
+                        <rect class="billete__bandera" x="26" y="16" width="26" height="18" rx="4"/>
+                        <circle class="billete__bandera-anillo" cx="39" cy="25" r="6"/>
+                        <path class="billete__firma" d="M26 42 q6 -6 12 0 t12 0 t12 0"/>
+                        <g class="billete__estrellas">
+                            <path d="M112 15 l1.6 3.4 3.7 0.5 -2.7 2.6 0.6 3.7 -3.2 -1.7 -3.2 1.7 0.6 -3.7 -2.7 -2.6 3.7 -0.5 Z"/>
+                            <path d="M64 70 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                            <path d="M150 22 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                        </g>
+                        <g class="billete__edificio" transform="translate(94,10)">
+                            <path class="billete__edificio-secundario" d="M20 50 L20 22 L28 4 L36 22 L36 50 Z"/>
+                            <path d="M6 50 L6 20 L14 0 L22 20 L22 50 Z"/>
+                        </g>
+                        <circle class="billete__chip-anillo" cx="176" cy="90" r="11"/>
+                        <path class="billete__chip-rayo" d="M173 85 l-3 6 h3 l-1 5 5 -7 h-3 z"/>
+                        <text class="billete__numero" x="28" y="60">20</text>
+                        <text class="billete__numero-esquina" x="28" y="92">20</text>
+                        <text class="billete__eur" x="95" y="98">EUR</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="billete4" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 20 euros">
+                    <p class="pieza__subtotal"><span id="resultadoB4">0.00</span>€</p>
                 </div>
 
-
-                <!-- 10 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>0.10€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="moneda010" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado010">0.00</span>€
-                    </p>
-
+                <div class="pieza pieza--billete">
+                    <span class="visualmente-oculto">Billete de 10 euros</span>
+                    <svg class="billete billete--10" viewBox="0 0 200 112" aria-hidden="true">
+                        <rect class="billete__base" x="1" y="1" width="198" height="110" rx="12"/>
+                        <rect class="billete__franja" x="0" y="0" width="13" height="112"/>
+                        <rect class="billete__franja billete__franja--clara" x="13" y="0" width="6" height="112"/>
+                        <rect class="billete__holograma" x="178" y="28" width="14" height="56" rx="6"/>
+                        <circle class="billete__mancha" cx="140" cy="56" r="50"/>
+                        <rect class="billete__bandera" x="26" y="16" width="26" height="18" rx="4"/>
+                        <circle class="billete__bandera-anillo" cx="39" cy="25" r="6"/>
+                        <path class="billete__firma" d="M26 42 q6 -6 12 0 t12 0 t12 0"/>
+                        <g class="billete__estrellas">
+                            <path d="M112 15 l1.6 3.4 3.7 0.5 -2.7 2.6 0.6 3.7 -3.2 -1.7 -3.2 1.7 0.6 -3.7 -2.7 -2.6 3.7 -0.5 Z"/>
+                            <path d="M64 70 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                            <path d="M150 22 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                        </g>
+                        <g class="billete__edificio" transform="translate(96,18)">
+                            <path d="M4 46 a20 20 0 0 1 40 0" class="billete__arco"/>
+                            <path d="M12 46 a12 12 0 0 1 24 0" class="billete__arco"/>
+                            <rect x="18" y="38" width="12" height="8"/>
+                        </g>
+                        <circle class="billete__chip-anillo" cx="176" cy="90" r="11"/>
+                        <path class="billete__chip-rayo" d="M173 85 l-3 6 h3 l-1 5 5 -7 h-3 z"/>
+                        <text class="billete__numero" x="28" y="60">10</text>
+                        <text class="billete__numero-esquina" x="28" y="92">10</text>
+                        <text class="billete__eur" x="95" y="98">EUR</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="billete5" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 10 euros">
+                    <p class="pieza__subtotal"><span id="resultadoB5">0.00</span>€</p>
                 </div>
 
+                <div class="pieza pieza--billete">
+                    <span class="visualmente-oculto">Billete de 5 euros</span>
+                    <svg class="billete billete--5" viewBox="0 0 200 112" aria-hidden="true">
+                        <rect class="billete__base" x="1" y="1" width="198" height="110" rx="12"/>
+                        <rect class="billete__franja" x="0" y="0" width="13" height="112"/>
+                        <rect class="billete__franja billete__franja--clara" x="13" y="0" width="6" height="112"/>
+                        <rect class="billete__holograma" x="178" y="28" width="14" height="56" rx="6"/>
+                        <circle class="billete__mancha" cx="140" cy="56" r="50"/>
+                        <rect class="billete__bandera" x="26" y="16" width="26" height="18" rx="4"/>
+                        <circle class="billete__bandera-anillo" cx="39" cy="25" r="6"/>
+                        <path class="billete__firma" d="M26 42 q6 -6 12 0 t12 0 t12 0"/>
+                        <g class="billete__estrellas">
+                            <path d="M112 15 l1.6 3.4 3.7 0.5 -2.7 2.6 0.6 3.7 -3.2 -1.7 -3.2 1.7 0.6 -3.7 -2.7 -2.6 3.7 -0.5 Z"/>
+                            <path d="M64 70 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                            <path d="M150 22 l1.3 2.8 3 0.4 -2.2 2.1 0.5 3 -2.6 -1.4 -2.6 1.4 0.5 -3 -2.2 -2.1 3 -0.4 Z"/>
+                        </g>
+                        <g class="billete__edificio" transform="translate(94,26)">
+                            <rect x="0" y="0" width="44" height="6"/>
+                            <rect x="2" y="6" width="5" height="26"/>
+                            <rect x="11" y="6" width="5" height="26"/>
+                            <rect x="20" y="6" width="5" height="26"/>
+                            <rect x="29" y="6" width="5" height="26"/>
+                            <rect x="38" y="6" width="5" height="26"/>
+                            <rect x="-2" y="32" width="48" height="4"/>
+                        </g>
+                        <circle class="billete__chip-anillo" cx="176" cy="90" r="11"/>
+                        <path class="billete__chip-rayo" d="M173 85 l-3 6 h3 l-1 5 5 -7 h-3 z"/>
+                        <text class="billete__numero" x="28" y="60">5</text>
+                        <text class="billete__numero-esquina" x="28" y="92">5</text>
+                        <text class="billete__eur" x="95" y="98">EUR</text>
+                    </svg>
+                    <input class="pieza__input" type="number" id="billete6" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 5 euros">
+                    <p class="pieza__subtotal"><span id="resultadoB6">0.00</span>€</p>
+                </div>
+            </div>
+            <p class="panel__subtotal">Subtotal en billetes: <span id="subtotalBilletes">0.00</span>€</p>
+        </section>
 
-                <!-- 5 -->
-                <div class="caja__input">
+        <section class="seccion" id="seccionDatos" aria-labelledby="tituloDatos">
+            <h2 class="seccion__titulo" id="tituloDatos">2. Datos del cierre <span class="seccion__titulo-nota">— para completar el cierre</span></h2>
 
-                    <div class="redonda__moneda">
-                        <h3>0.05€</h3>
-                    </div>
-
-                    <input class="input__moneda" type="number" id="moneda005" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado005">0.00</span>€
-                    </p>
-
+            <div class="formulario">
+                <div class="campo">
+                    <label for="responsable">Responsable</label>
+                    <input class="campo__input" type="text" id="responsable" placeholder="Nombre" autocomplete="off" oninput="actualizarResumen()">
                 </div>
 
-
-                <!-- 2 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>0.02€</h3>
+                <div class="campo">
+                    <label for="totalDia">Total del día</label>
+                    <div class="campo__moneda">
+                        <input class="campo__input" type="text" id="totalDia" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); calcularCierre()">
+                        <span class="campo__sufijo">€</span>
                     </div>
-
-                    <input class="input__moneda" type="number" id="moneda002" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado002">0.00</span>€
-                    </p>
-
                 </div>
 
-
-                <!-- 1 -->
-                <div class="caja__input">
-
-                    <div class="redonda__moneda">
-                        <h3>0.01€</h3>
+                <div class="campo-par">
+                    <div class="campo">
+                        <label for="visa">Visa</label>
+                        <p class="campo__ayuda">Total cobrado con tarjeta durante el día.</p>
+                        <div class="campo__moneda">
+                            <input class="campo__input" type="text" id="visa" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); calcularCierre()">
+                            <span class="campo__sufijo">€</span>
+                        </div>
                     </div>
-
-                    <input class="input__moneda" type="number" id="moneda001" min="0" step="1"
-                        oninput="calcularTotal()">
-
-                    <p class="parrafo__input">
-                        Total =
-                        <span id="resultado001">0.00</span>€
-                    </p>
-
+                    <div class="campo">
+                        <label for="uber">Uber</label>
+                        <p class="campo__ayuda">Total cobrado a través de Uber.</p>
+                        <div class="campo__moneda">
+                            <input class="campo__input" type="text" id="uber" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); calcularCierre()">
+                            <span class="campo__sufijo">€</span>
+                        </div>
+                    </div>
                 </div>
 
+                <div class="campo">
+                    <label for="gastos">Gastos</label>
+                    <p class="campo__ayuda">Dinero retirado de la caja para pagos o compras.</p>
+                    <div class="campo__moneda">
+                        <input class="campo__input" type="text" id="gastos" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); calcularCierre()">
+                        <span class="campo__sufijo">€</span>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label for="efectivoReal">Efectivo real</label>
+                    <div class="campo__moneda">
+                        <input class="campo__input" type="text" id="efectivoReal" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); calcularCierre()">
+                        <span class="campo__sufijo">€</span>
+                    </div>
+                </div>
             </div>
 
-
-            <!-- RESUMEN FINAL -->
-
-            <div class="resumen">
-
-                <p>
-                    Total billetes:
-                    <strong>
-                        <span id="totalBilletes">0.00</span>€
-                    </strong>
-                </p>
-
-                <p>
-                    Total monedas:
-                    <strong>
-                        <span id="totalMonedas">0.00</span>€
-                    </strong>
-                </p>
-
-                <div class="total-final">
-                    TOTAL:
-                    <span id="totalGeneral">0.00</span>€
-                </div>
-
+            <div class="resultado-parcial">
+                <span class="resultado-parcial__etiqueta">Efectivo teórico</span>
+                <span class="resultado-parcial__cifra" id="cifraEfectivoTeorico">— €</span>
             </div>
 
+            <div class="resultado-final" id="resultadoFinal">
+                <p class="resultado-final__eyebrow">Resultado del cierre</p>
+                <p class="resultado-final__estado" id="estadoResultado">—</p>
+                <p class="resultado-final__cifra" id="cifraDiferencia">— €</p>
+                <p class="resultado-final__sub" id="subResultado"></p>
+            </div>
 
-            <!-- BOTÓN LIMPIAR -->
+            <div class="formulario formulario--fondo">
+                <p class="formulario__nota">Fondo de caja <span class="formulario__nota-sub">(independiente del resultado del cierre)</span></p>
 
-            <button class="btn-limpiar" onclick="limpiarContador()">
-                Limpiar contador
-            </button>
+                <div class="campo">
+                    <label for="fondoActual">Fondo actual</label>
+                    <div class="campo__moneda">
+                        <input class="campo__input" type="text" id="fondoActual" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); actualizarFondo()">
+                        <span class="campo__sufijo">€</span>
+                    </div>
+                </div>
 
+                <div class="fondo-resumen">
+                    <div class="fondo-resumen__linea">
+                        <span>Suma de monedas</span>
+                        <span id="cifraSumaMonedas">0.00 €</span>
+                    </div>
+                    <div class="fondo-resumen__linea">
+                        <span>Total disponible</span>
+                        <span id="cifraTotalDisponible">0.00 €</span>
+                    </div>
+                    <div class="fondo-resumen__linea">
+                        <span>Fondo final</span>
+                        <span id="cifraFondoFinal">0.00 €</span>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label for="fondoObjetivo">Fondo objetivo</label>
+                    <p class="campo__ayuda">Efectivo que quieres dejar en la caja para el día siguiente.</p>
+                    <div class="campo__moneda">
+                        <input class="campo__input" type="text" id="fondoObjetivo" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); actualizarFondo()">
+                        <span class="campo__sufijo">€</span>
+                    </div>
+                </div>
+
+                <div class="resultado-parcial">
+                    <span class="resultado-parcial__etiqueta">A ingresar para completar el fondo</span>
+                    <span class="resultado-parcial__cifra" id="cifraAIngresar">— €</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="seccion" id="seccionResumen" aria-labelledby="tituloResumen">
+            <h2 class="seccion__titulo" id="tituloResumen">3. Resumen del cierre</h2>
+
+            <div class="resumen" id="tarjetaResumen">
+                <div class="resumen__cabecera">
+                    <span class="resumen__empresa">CajaFlow</span>
+                    <span class="resumen__fecha" id="resumenFecha">—</span>
+                </div>
+
+                <div class="resumen__tarjeta">
+                    <p class="resumen__tarjeta-titulo">Efectivo contado</p>
+                    <dl class="resumen__lista">
+                        <div class="resumen__fila">
+                            <dt>Total en monedas</dt>
+                            <dd id="resumenMonedas">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Total en billetes</dt>
+                            <dd id="resumenBilletes">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila resumen__fila--destacada">
+                            <dt>Total efectivo contado</dt>
+                            <dd id="resumenTotalContado">0.00 €</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <div class="resumen__tarjeta resumen__tarjeta--imprimible">
+                    <p class="resumen__tarjeta-titulo">Cierre del día</p>
+                    <dl class="resumen__lista">
+                        <div class="resumen__fila">
+                            <dt>Responsable</dt>
+                            <dd id="resumenResponsable">—</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Total del día</dt>
+                            <dd id="resumenTotalDia">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Visa</dt>
+                            <dd id="resumenVisa">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Uber</dt>
+                            <dd id="resumenUber">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Gastos</dt>
+                            <dd id="resumenGastos">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Efectivo teórico</dt>
+                            <dd id="resumenEfectivoTeorico">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Efectivo real</dt>
+                            <dd id="resumenEfectivoReal">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila resumen__fila--destacada">
+                            <dt>Diferencia</dt>
+                            <dd id="resumenDiferencia">0.00 €</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <div class="resumen__tarjeta">
+                    <p class="resumen__tarjeta-titulo">Fondo de caja</p>
+                    <dl class="resumen__lista">
+                        <div class="resumen__fila">
+                            <dt>Fondo actual</dt>
+                            <dd id="resumenFondoActual">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Suma de monedas</dt>
+                            <dd id="resumenSumaMonedas">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Total disponible</dt>
+                            <dd id="resumenTotalDisponible">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Fondo final</dt>
+                            <dd id="resumenFondoFinal">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Fondo objetivo</dt>
+                            <dd id="resumenFondoObjetivo">0.00 €</dd>
+                        </div>
+                        <div class="resumen__fila resumen__fila--destacada">
+                            <dt>A ingresar para completar el fondo</dt>
+                            <dd id="resumenAIngresar">0.00 €</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="resumen__acciones">
+                <button type="button" class="boton-descarga" onclick="descargarResumen()">
+                    Descargar resumen (PDF)
+                </button>
+            </div>
         </section>
 
     </main>
 
+    <footer class="total" id="total">
+        <div class="total__desglose">
+            <span><span id="miniMonedas">0.00</span>€ en monedas</span>
+            <span class="total__separador">+</span>
+            <span><span id="miniBilletes">0.00</span>€ en billetes</span>
+        </div>
+        <p class="total__cifra"><span class="total__etiqueta">Total</span> <span id="totalGeneral">0.00</span>€</p>
+    </footer>
+
     <script src="script.js"></script>
-
 </body>
-
 </html>
