@@ -284,12 +284,47 @@ function inicializarPasos() {
         { id: "seccionResumen", paso: "resumen" },
     ];
     const enlaces = document.querySelectorAll(".pasos__paso");
+    const nav = document.getElementById("pasos");
 
     function marcarActivo(pasoActivo) {
         enlaces.forEach((enlace) => {
             enlace.classList.toggle("is-activo", enlace.dataset.paso === pasoActivo);
         });
     }
+
+    // Alto real de la barra de pasos (sticky), para no dejar la sección tapada.
+    function alturaNav() {
+        return nav ? nav.getBoundingClientRect().height : 0;
+    }
+
+    // Desplazamiento manual: evita depender solo de scroll-margin-top, que no
+    // se reajusta si el alto de la página cambia tras la carga (p. ej. al
+    // terminar de cargar la tipografía web).
+    function irASeccion(id, comportamiento) {
+        const elemento = document.getElementById(id);
+        if (!elemento) return;
+
+        // El paso 1 sube hasta el principio de la página para que se vea la cabecera.
+        if (id === "pasoEfectivo") {
+            window.scrollTo({ top: 0, behavior: comportamiento });
+            return;
+        }
+
+        const destino = elemento.getBoundingClientRect().top + window.scrollY - alturaNav() - 8;
+        window.scrollTo({ top: Math.max(destino, 0), behavior: comportamiento });
+    }
+
+    enlaces.forEach((enlace) => {
+        enlace.addEventListener("click", (evento) => {
+            const id = enlace.getAttribute("href").slice(1);
+            const objetivo = objetivos.find((o) => o.id === id);
+            if (!objetivo) return;
+            evento.preventDefault();
+            marcarActivo(objetivo.paso);
+            irASeccion(id, "smooth");
+            history.pushState(null, "", `#${id}`);
+        });
+    });
 
     const observador = new IntersectionObserver(
         (entradas) => {
@@ -299,7 +334,7 @@ function inicializarPasos() {
                 if (objetivo) marcarActivo(objetivo.paso);
             });
         },
-        { rootMargin: "-15% 0px -75% 0px" }
+        { rootMargin: `-${Math.ceil(alturaNav()) + 1}px 0px -65% 0px` }
     );
 
     objetivos.forEach(({ id }) => {
@@ -307,7 +342,24 @@ function inicializarPasos() {
         if (elemento) observador.observe(elemento);
     });
 
-    marcarActivo("efectivo");
+    // Carga directa por URL con ancla (p. ej. recargar en #seccionResumen):
+    // el navegador hace su propio salto nativo antes de que este script
+    // corra, así que fijamos el tab correcto ya mismo y reajustamos el
+    // scroll una vez que termina de cargar todo (incluida la tipografía
+    // web), que es cuando el alto real de la página queda definitivo.
+    const idInicial = location.hash.slice(1);
+    const objetivoInicial = objetivos.find((o) => o.id === idInicial);
+
+    if (objetivoInicial) {
+        marcarActivo(objetivoInicial.paso);
+        const reajustar = () => irASeccion(idInicial, "auto");
+        window.addEventListener("load", reajustar);
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(reajustar);
+        }
+    } else {
+        marcarActivo("efectivo");
+    }
 }
 
 // ---------- Inicialización ----------
