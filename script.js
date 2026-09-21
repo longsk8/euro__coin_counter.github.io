@@ -184,17 +184,23 @@ function calcularCierre() {
 function actualizarFondo() {
     const sumaMonedas = parseFloat(document.getElementById("subtotalMonedas").textContent) || 0;
     const fondoActual = leerDinero("fondoActual");
+    const fondoObjetivoInput = document.getElementById("fondoObjetivo");
     const fondoObjetivo = leerDinero("fondoObjetivo");
 
     const totalDisponible = fondoActual + sumaMonedas;
     const fondoFinal = Math.floor(totalDisponible / 5) * 5;
-    const aIngresar = fondoObjetivo - fondoFinal;
 
     document.getElementById("cifraSumaMonedas").textContent = sumaMonedas.toFixed(2) + " €";
     document.getElementById("cifraTotalDisponible").textContent = totalDisponible.toFixed(2) + " €";
     document.getElementById("cifraFondoFinal").textContent = fondoFinal.toFixed(2) + " €";
-    document.getElementById("cifraAIngresar").innerHTML =
-        aIngresar.toFixed(2) + ' <span class="cifra__moneda">€</span>';
+
+    const cifraAIngresar = document.getElementById("cifraAIngresar");
+    if (fondoObjetivoInput.value.trim() === "") {
+        cifraAIngresar.textContent = "— €";
+    } else {
+        const aIngresar = fondoObjetivo - fondoFinal;
+        cifraAIngresar.innerHTML = aIngresar.toFixed(2) + ' <span class="cifra__moneda">€</span>';
+    }
 
     actualizarResumen();
 }
@@ -227,6 +233,35 @@ function actualizarResumen() {
     document.getElementById("resumenFondoFinal").textContent = texto("cifraFondoFinal");
     document.getElementById("resumenFondoObjetivo").textContent = numero("fondoObjetivo");
     document.getElementById("resumenAIngresar").textContent = texto("cifraAIngresar");
+
+    actualizarEstadoPasos();
+}
+
+// ---------- Estado "completado" de los pasos (según datos, no scroll) ----------
+function pasoTieneDatos(paso) {
+    switch (paso) {
+        case "efectivo":
+            return (parseFloat(document.getElementById("totalGeneral").textContent) || 0) > 0;
+        case "datos":
+            return (
+                document.getElementById("responsable").value.trim() !== "" ||
+                leerDinero("totalDia") > 0 ||
+                leerDinero("visa") > 0 ||
+                leerDinero("uber") > 0 ||
+                leerDinero("gastos") > 0 ||
+                leerDinero("efectivoReal") > 0
+            );
+        case "fondo":
+            return leerDinero("fondoActual") > 0 || leerDinero("fondoObjetivo") > 0;
+        default:
+            return false;
+    }
+}
+
+function actualizarEstadoPasos() {
+    document.querySelectorAll(".pasos__paso").forEach((enlace) => {
+        enlace.classList.toggle("is-completado", pasoTieneDatos(enlace.dataset.paso));
+    });
 }
 
 // ---------- Descargar resumen como PDF ----------
@@ -235,27 +270,24 @@ function descargarResumen() {
     const fecha = document.getElementById("resumenFecha").textContent.replace(/\s+/g, "-").toLowerCase();
     const tituloOriginal = document.title;
 
-    document.title = `CajaFlow - ${responsable} - ${fecha}`;
+    document.title = `federal - ${responsable} - ${fecha}`;
     window.print();
     document.title = tituloOriginal;
 }
 
 // ---------- Indicador de progreso ----------
 function inicializarPasos() {
-    const orden = ["efectivo", "datos", "resumen"];
     const objetivos = [
         { id: "pasoEfectivo", paso: "efectivo" },
         { id: "seccionDatos", paso: "datos" },
+        { id: "seccionFondo", paso: "fondo" },
         { id: "seccionResumen", paso: "resumen" },
     ];
     const enlaces = document.querySelectorAll(".pasos__paso");
 
     function marcarActivo(pasoActivo) {
-        const indiceActivo = orden.indexOf(pasoActivo);
         enlaces.forEach((enlace) => {
-            const indice = orden.indexOf(enlace.dataset.paso);
-            enlace.classList.toggle("is-activo", indice === indiceActivo);
-            enlace.classList.toggle("is-completado", indice < indiceActivo);
+            enlace.classList.toggle("is-activo", enlace.dataset.paso === pasoActivo);
         });
     }
 
