@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="estilos.css">
-    <title>CajaFlow</title>
+    <title>federal</title>
 </head>
 
 <body>
@@ -16,17 +16,10 @@
         <div class="cabecera__interior">
             <div class="cabecera__texto">
                 <p class="cabecera__etiqueta">Control de caja</p>
-                <div class="cabecera__marca">
-                    <span class="cabecera__logo" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" class="cabecera__logo-icono">
-                            <path d="M4 10.5 6.5 5h11L20 10.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                            <rect x="3.5" y="10.5" width="17" height="8.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
-                            <path d="M9.5 14.5h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-                        </svg>
-                    </span>
-                    <h1 class="cabecera__titulo">CajaFlow</h1>
-                </div>
-                <p class="cabecera__sub">Cierres de caja simples para pequeños negocios.</p>
+                <h1 class="cabecera__titulo">
+                    <img src="img/logo-federal.webp" alt="federal" class="cabecera__logo-img">
+                </h1>
+                <p class="cabecera__sub">Cierres de caja simple para tu negocio.</p>
             </div>
             <div class="cabecera__fecha">
                 <span class="cabecera__fecha-etiqueta">Fecha de cierre</span>
@@ -43,22 +36,26 @@
     </header>
 
     <nav class="pasos" id="pasos" aria-label="Progreso del cierre">
-        <a class="pasos__paso" href="#pasoEfectivo" data-paso="efectivo">
+        <a class="pasos__paso" href="#pasoEfectivo" data-paso="efectivo" aria-label="Paso 1: Efectivo">
             <span class="pasos__numero">1</span>
             <span class="pasos__etiqueta">Efectivo</span>
         </a>
-        <a class="pasos__paso" href="#seccionDatos" data-paso="datos">
+        <a class="pasos__paso" href="#seccionDatos" data-paso="datos" aria-label="Paso 2: Datos">
             <span class="pasos__numero">2</span>
             <span class="pasos__etiqueta">Datos</span>
         </a>
-        <a class="pasos__paso" href="#seccionResumen" data-paso="resumen">
+        <a class="pasos__paso" href="#seccionFondo" data-paso="fondo" aria-label="Paso 3: Fondo de caja">
             <span class="pasos__numero">3</span>
+            <span class="pasos__etiqueta">Fondo</span>
+        </a>
+        <a class="pasos__paso" href="#seccionResumen" data-paso="resumen" aria-label="Paso 4: Resultado">
+            <span class="pasos__numero">4</span>
             <span class="pasos__etiqueta">Resultado</span>
         </a>
     </nav>
 
     <main class="main">
-        <p class="main__intro">Sigue estos pasos para cerrar la caja: cuenta el efectivo, completa los datos del día y revisa el resultado.</p>
+        <p class="main__intro">Sigue estos pasos para cerrar la caja: cuenta el efectivo, completa los datos del día, define el fondo y revisa el resultado.</p>
 
         <h2 class="seccion__titulo" id="pasoEfectivo">1. Contar efectivo</h2>
 
@@ -76,6 +73,7 @@
 
         <section class="panel" id="panelMonedas" role="tabpanel" aria-labelledby="tabMonedas">
             <div class="rejilla">
+                <p class="rejilla__grupo">Euros</p>
                 <div class="pieza">
                     <span class="visualmente-oculto">Moneda de 2 euros</span>
                     <svg class="moneda moneda--2e" viewBox="0 0 100 100" aria-hidden="true">
@@ -130,6 +128,7 @@
                     <p class="pieza__subtotal"><span id="resultado2">0.00</span>€</p>
                 </div>
 
+                <p class="rejilla__grupo">Céntimos</p>
                 <div class="pieza">
                     <span class="visualmente-oculto">Moneda de 50 céntimos</span>
                     <svg class="moneda moneda--50c" viewBox="0 0 100 100" aria-hidden="true">
@@ -273,6 +272,7 @@
 
         <section class="panel is-oculto" id="panelBilletes" role="tabpanel" aria-labelledby="tabBilletes">
             <div class="rejilla rejilla--billetes">
+                <p class="rejilla__grupo">Billetes grandes</p>
                 <div class="pieza pieza--billete">
                     <span class="visualmente-oculto">Billete de 200 euros</span>
                     <svg class="billete billete--200" viewBox="0 0 200 112" aria-hidden="true">
@@ -373,6 +373,7 @@
                     <p class="pieza__subtotal"><span id="resultadoB3">0.00</span>€</p>
                 </div>
 
+                <p class="rejilla__grupo">Billetes pequeños</p>
                 <div class="pieza pieza--billete">
                     <span class="visualmente-oculto">Billete de 20 euros</span>
                     <svg class="billete billete--20" viewBox="0 0 200 112" aria-hidden="true">
@@ -538,9 +539,12 @@
                 <p class="resultado-final__sub" id="subResultado"></p>
             </div>
 
-            <div class="formulario formulario--fondo">
-                <p class="formulario__nota">Fondo de caja <span class="formulario__nota-sub">(independiente del resultado del cierre)</span></p>
+        </section>
 
+        <section class="seccion" id="seccionFondo" aria-labelledby="tituloFondo">
+            <h2 class="seccion__titulo" id="tituloFondo">3. Fondo de caja <span class="seccion__titulo-nota">— independiente del resultado del cierre</span></h2>
+
+            <div class="formulario">
                 <div class="campo">
                     <label for="fondoActual">Fondo actual</label>
                     <div class="campo__moneda">
@@ -558,7 +562,7 @@
                         <span>Total disponible</span>
                         <span id="cifraTotalDisponible">0.00 €</span>
                     </div>
-                    <div class="fondo-resumen__linea">
+                    <div class="fondo-resumen__linea" hidden>
                         <span>Fondo final</span>
                         <span id="cifraFondoFinal">0.00 €</span>
                     </div>
@@ -581,11 +585,11 @@
         </section>
 
         <section class="seccion" id="seccionResumen" aria-labelledby="tituloResumen">
-            <h2 class="seccion__titulo" id="tituloResumen">3. Resumen del cierre</h2>
+            <h2 class="seccion__titulo" id="tituloResumen">4. Resumen del cierre</h2>
 
             <div class="resumen" id="tarjetaResumen">
                 <div class="resumen__cabecera">
-                    <span class="resumen__empresa">CajaFlow</span>
+                    <span class="resumen__empresa">federal</span>
                     <span class="resumen__fecha" id="resumenFecha">—</span>
                 </div>
 
