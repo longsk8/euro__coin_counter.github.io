@@ -941,6 +941,14 @@ body {
     color: var(--texto-print);
     background: var(--superficie-hundida);
     outline: none;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.pieza__input::-webkit-outer-spin-button,
+.pieza__input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .pieza__input:focus-visible {
