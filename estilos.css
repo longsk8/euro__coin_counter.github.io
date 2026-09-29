@@ -975,6 +975,7 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 20;
     background: var(--superficie);
     border-top: 1px solid var(--linea);
     box-shadow: 0 -6px 16px rgba(16, 24, 40, 0.05);
