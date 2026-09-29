@@ -362,6 +362,20 @@ function inicializarPasos() {
     }
 }
 
+// ---------- Barra inferior fija vs. teclado en iOS ----------
+// En iOS Safari, position:fixed se ancla al viewport de layout (la página
+// completa), no al viewport visual (lo que realmente se ve por encima del
+// teclado/barra de autorrelleno). Sin este ajuste, la barra de total queda
+// tapada o duplicada visualmente cuando se abre el teclado.
+function ajustarBarraTotal() {
+    const total = document.querySelector(".total");
+    if (!total || !window.visualViewport) return;
+
+    const vv = window.visualViewport;
+    const solape = window.innerHeight - (vv.height + vv.offsetTop);
+    total.style.transform = solape > 0 ? `translateY(-${solape}px)` : "";
+}
+
 // ---------- Inicialización ----------
 document.addEventListener("DOMContentLoaded", () => {
     animarEtiquetaCabecera();
@@ -369,4 +383,9 @@ document.addEventListener("DOMContentLoaded", () => {
     calcularTotal();
     calcularCierre();
     inicializarPasos();
+
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", ajustarBarraTotal);
+        window.visualViewport.addEventListener("scroll", ajustarBarraTotal);
+    }
 });
