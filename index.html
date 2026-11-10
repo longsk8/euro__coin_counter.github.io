@@ -8,16 +8,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="estilos.css">
-    <title>federal</title>
+    <title>Federal · Cierre de caja</title>
 </head>
 
 <body>
-    <header class="cabecera">
+    <header class="cabecera" id="cabecera">
         <div class="cabecera__interior">
             <div class="cabecera__texto">
                 <p class="cabecera__etiqueta">Control de caja</p>
                 <h1 class="cabecera__titulo">
-                    <img src="img/logo-federal.webp" alt="federal" class="cabecera__logo-img">
+                    <img src="img/logo-federal.webp" alt="Logo de Federal" class="cabecera__logo-img">
                 </h1>
                 
             </div>
@@ -98,7 +98,7 @@
                         <text class="moneda__numero" x="50" y="51" text-anchor="middle" dominant-baseline="middle">2</text>
                     </svg>
                     <input class="pieza__input" type="number" id="numero1" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 2 euros">
-                    <p class="pieza__subtotal"><span id="resultado1">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultado1">0,00 €</span></p>
                 </div>
 
                 <div class="pieza">
@@ -125,7 +125,7 @@
                         <text class="moneda__numero" x="50" y="51" text-anchor="middle" dominant-baseline="middle">1</text>
                     </svg>
                     <input class="pieza__input" type="number" id="numero2" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 1 euro">
-                    <p class="pieza__subtotal"><span id="resultado2">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultado2">0,00 €</span></p>
                 </div>
 
                 <p class="rejilla__grupo">Céntimos</p>
@@ -149,7 +149,7 @@
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">50</text>
                     </svg>
                     <input class="pieza__input" type="number" id="numero3" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 50 céntimos">
-                    <p class="pieza__subtotal"><span id="resultado3">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultado3">0,00 €</span></p>
                 </div>
 
                 <div class="pieza">
@@ -172,7 +172,7 @@
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">20</text>
                     </svg>
                     <input class="pieza__input" type="number" id="numero4" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 20 céntimos">
-                    <p class="pieza__subtotal"><span id="resultado4">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultado4">0,00 €</span></p>
                 </div>
 
                 <div class="pieza">
@@ -195,7 +195,7 @@
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">10</text>
                     </svg>
                     <input class="pieza__input" type="number" id="numero5" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 10 céntimos">
-                    <p class="pieza__subtotal"><span id="resultado5">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultado5">0,00 €</span></p>
                 </div>
 
                 <div class="pieza">
@@ -218,7 +218,7 @@
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">5</text>
                     </svg>
                     <input class="pieza__input" type="number" id="numero6" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 5 céntimos">
-                    <p class="pieza__subtotal"><span id="resultado6">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultado6">0,00 €</span></p>
                 </div>
 
                 <div class="pieza">
@@ -241,7 +241,7 @@
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">2</text>
                     </svg>
                     <input class="pieza__input" type="number" id="numero7" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 2 céntimos">
-                    <p class="pieza__subtotal"><span id="resultado7">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultado7">0,00 €</span></p>
                 </div>
 
                 <div class="pieza">
@@ -264,10 +264,10 @@
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">1</text>
                     </svg>
                     <input class="pieza__input" type="number" id="numero8" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 1 céntimo">
-                    <p class="pieza__subtotal"><span id="resultado8">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultado8">0,00 €</span></p>
                 </div>
             </div>
-            <p class="panel__subtotal">Subtotal en monedas: <span id="subtotalMonedas">0.00</span>€</p>
+            <p class="panel__subtotal">Total de monedas: <span id="subtotalMonedas">0,00 €</span></p>
         </section>
 
         <section class="panel is-oculto" id="panelBilletes" role="tabpanel" aria-labelledby="tabBilletes">
@@ -304,7 +304,7 @@
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
                     <input class="pieza__input" type="number" id="billete1" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 200 euros">
-                    <p class="pieza__subtotal"><span id="resultadoB1">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultadoB1">0,00 €</span></p>
                 </div>
 
                 <div class="pieza pieza--billete">
@@ -337,7 +337,7 @@
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
                     <input class="pieza__input" type="number" id="billete2" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 100 euros">
-                    <p class="pieza__subtotal"><span id="resultadoB2">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultadoB2">0,00 €</span></p>
                 </div>
 
                 <div class="pieza pieza--billete">
@@ -370,7 +370,7 @@
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
                     <input class="pieza__input" type="number" id="billete3" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 50 euros">
-                    <p class="pieza__subtotal"><span id="resultadoB3">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultadoB3">0,00 €</span></p>
                 </div>
 
                 <p class="rejilla__grupo">Billetes pequeños</p>
@@ -401,7 +401,7 @@
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
                     <input class="pieza__input" type="number" id="billete4" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 20 euros">
-                    <p class="pieza__subtotal"><span id="resultadoB4">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultadoB4">0,00 €</span></p>
                 </div>
 
                 <div class="pieza pieza--billete">
@@ -432,7 +432,7 @@
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
                     <input class="pieza__input" type="number" id="billete5" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 10 euros">
-                    <p class="pieza__subtotal"><span id="resultadoB5">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultadoB5">0,00 €</span></p>
                 </div>
 
                 <div class="pieza pieza--billete">
@@ -467,14 +467,20 @@
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
                     <input class="pieza__input" type="number" id="billete6" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 5 euros">
-                    <p class="pieza__subtotal"><span id="resultadoB6">0.00</span>€</p>
+                    <p class="pieza__subtotal"><span id="resultadoB6">0,00 €</span></p>
                 </div>
             </div>
-            <p class="panel__subtotal">Subtotal en billetes: <span id="subtotalBilletes">0.00</span>€</p>
+            <p class="panel__subtotal">Total de billetes: <span id="subtotalBilletes">0,00 €</span></p>
         </section>
 
+        <div class="siguiente-paso">
+            <button type="button" class="boton-secundario" onclick="irAlPaso('seccionDatos')">
+                Siguiente: Datos del cierre <span class="siguiente-paso__flecha" aria-hidden="true">↓</span>
+            </button>
+        </div>
+
         <section class="seccion" id="seccionDatos" aria-labelledby="tituloDatos">
-            <h2 class="seccion__titulo" id="tituloDatos">2. Datos del cierre <span class="seccion__titulo-nota">— para completar el cierre</span></h2>
+            <h2 class="seccion__titulo" id="tituloDatos" tabindex="-1">2. Datos del cierre <span class="seccion__titulo-nota">— para completar el cierre</span></h2>
 
             <div class="formulario">
                 <div class="campo">
@@ -518,31 +524,42 @@
                     </div>
                 </div>
 
+                <!-- Orden del cálculo: 1) efectivo teórico, 2) efectivo real, 3) resultado -->
+                <div class="resultado-parcial">
+                    <span class="resultado-parcial__etiqueta">Efectivo teórico</span>
+                    <span class="resultado-parcial__cifra" id="cifraEfectivoTeorico">— €</span>
+                    <p class="resultado-parcial__ayuda">Lo que debería haber en efectivo: Total del día − Visa − Uber − Gastos.</p>
+                </div>
+                <p class="aviso" id="avisoTeoricoNegativo" role="alert" hidden>Visa, Uber y Gastos suman más que el Total del día. Revisa esos importes.</p>
+
                 <div class="campo">
                     <label for="efectivoReal">Efectivo real</label>
                     <div class="campo__moneda">
-                        <input class="campo__input" type="text" id="efectivoReal" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); calcularCierre()">
+                        <input class="campo__input" type="text" id="efectivoReal" inputmode="decimal" placeholder="0,00" aria-describedby="ayudaEfectivoReal" oninput="filtrarEntradaDinero(this); calcularCierre()">
                         <span class="campo__sufijo">€</span>
                     </div>
+                    <p class="campo__ayuda campo__ayuda--debajo" id="ayudaEfectivoReal">Escribe el efectivo que tienes. El resto fuera del fondo se suma solo en el resultado.</p>
+                    <p class="aviso" id="avisoEfectivoRealVacio" role="alert" hidden>Falta el efectivo real. Escríbelo aquí para ver el resultado.</p>
                 </div>
-            </div>
-
-            <div class="resultado-parcial">
-                <span class="resultado-parcial__etiqueta">Efectivo teórico</span>
-                <span class="resultado-parcial__cifra" id="cifraEfectivoTeorico">— €</span>
             </div>
 
             <div class="resultado-final" id="resultadoFinal">
                 <p class="resultado-final__eyebrow">Resultado del cierre</p>
-                <p class="resultado-final__estado" id="estadoResultado">—</p>
-                <p class="resultado-final__cifra" id="cifraDiferencia">— €</p>
-                <p class="resultado-final__sub" id="subResultado"></p>
+                <p class="resultado-final__estado" id="estadoResultado" hidden></p>
+                <p class="resultado-final__cifra" id="cifraDiferencia" hidden></p>
+                <p class="resultado-final__significado" id="significadoResultado" hidden></p>
+                <p class="resultado-final__sub" id="subResultado">Falta: total del día, efectivo real, fondo actual (paso 3)</p>
             </div>
 
+            <div class="siguiente-paso">
+                <button type="button" class="boton-secundario" onclick="irAlPaso('seccionFondo')">
+                    Siguiente: Fondo de caja <span class="siguiente-paso__flecha" aria-hidden="true">↓</span>
+                </button>
+            </div>
         </section>
 
         <section class="seccion" id="seccionFondo" aria-labelledby="tituloFondo">
-            <h2 class="seccion__titulo" id="tituloFondo">3. Fondo de caja <span class="seccion__titulo-nota">— independiente del resultado del cierre</span></h2>
+            <h2 class="seccion__titulo" id="tituloFondo" tabindex="-1">3. Fondo de caja <span class="seccion__titulo-nota">— independiente del resultado del cierre</span></h2>
 
             <div class="formulario">
                 <div class="campo">
@@ -553,18 +570,27 @@
                     </div>
                 </div>
 
+                <!-- El cálculo continúa el campo "Fondo actual" de arriba:
+                     Fondo actual + Total de monedas = Total disponible -->
                 <div class="fondo-resumen">
                     <div class="fondo-resumen__linea">
-                        <span>Suma de monedas</span>
-                        <span id="cifraSumaMonedas">0.00 €</span>
+                        <span><span class="fondo-resumen__operador">+</span> Total de monedas</span>
+                        <span id="cifraSumaMonedas">0,00 €</span>
                     </div>
-                    <div class="fondo-resumen__linea">
-                        <span>Total disponible</span>
-                        <span id="cifraTotalDisponible">0.00 €</span>
+                    <div class="fondo-resumen__linea fondo-resumen__linea--suma">
+                        <span><span class="fondo-resumen__operador">=</span> Total disponible</span>
+                        <span id="cifraTotalDisponible">0,00 €</span>
                     </div>
-                    <div class="fondo-resumen__linea" hidden>
+                    <div class="fondo-resumen__linea fondo-resumen__linea--destacada">
                         <span>Fondo final</span>
-                        <span id="cifraFondoFinal">0.00 €</span>
+                        <span id="cifraFondoFinal">0,00 €</span>
+                    </div>
+                    <div class="fondo-resumen__resto" id="bloqueRestoFondo" hidden>
+                        <div class="fondo-resumen__linea">
+                            <span>Resto fuera del fondo</span>
+                            <span id="cifraRestoFondo">0,00 €</span>
+                        </div>
+                        <p class="campo__ayuda">Estos céntimos no entran en el fondo; se suman al efectivo real en el resultado.</p>
                     </div>
                 </div>
 
@@ -580,12 +606,21 @@
                 <div class="resultado-parcial">
                     <span class="resultado-parcial__etiqueta">A ingresar para completar el fondo</span>
                     <span class="resultado-parcial__cifra" id="cifraAIngresar">— €</span>
+                    <p class="resultado-parcial__ayuda">Lo que falta para llegar al fondo objetivo.</p>
                 </div>
+            </div>
+
+            <div class="siguiente-paso">
+                <button type="button" class="boton-secundario" onclick="irAlPaso('seccionResumen')">
+                    Siguiente: Ver el resumen <span class="siguiente-paso__flecha" aria-hidden="true">↓</span>
+                </button>
             </div>
         </section>
 
         <section class="seccion" id="seccionResumen" aria-labelledby="tituloResumen">
-            <h2 class="seccion__titulo" id="tituloResumen">4. Resumen del cierre</h2>
+            <h2 class="seccion__titulo" id="tituloResumen" tabindex="-1">4. Resumen del cierre</h2>
+            <!-- Frase fija: dice cuándo está terminado el cierre, señalando las dos filas de abajo -->
+            <p class="estado-cierre">Cuando el resultado del paso 2 y «A ingresar» tengan valor, el cierre está terminado: descarga el resumen.</p>
 
             <div class="resumen" id="tarjetaResumen">
                 <div class="resumen__cabecera">
@@ -593,20 +628,38 @@
                     <span class="resumen__fecha" id="resumenFecha">—</span>
                 </div>
 
+                <!-- Lo esencial, siempre visible -->
+                <div class="resumen__tarjeta resumen__tarjeta--esencial">
+                    <dl class="resumen__lista">
+                        <div class="resumen__fila resumen__fila--destacada js-a-ingresar">
+                            <dt>A ingresar para completar el fondo</dt>
+                            <dd>— €</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- El desglose completo, plegado (se abre solo al imprimir) -->
+                <details class="resumen__desglose" id="desgloseResumen">
+                    <summary class="resumen__desglose-boton">
+                        <span class="resumen__desglose-ver">Ver desglose completo</span>
+                        <span class="resumen__desglose-ocultar">Ocultar desglose</span>
+                    </summary>
+
+                <div class="resumen__desglose-contenido">
                 <div class="resumen__tarjeta">
-                    <p class="resumen__tarjeta-titulo">Efectivo contado</p>
+                    <p class="resumen__tarjeta-titulo">Contador de billetes y monedas</p>
                     <dl class="resumen__lista">
                         <div class="resumen__fila">
-                            <dt>Total en monedas</dt>
-                            <dd id="resumenMonedas">0.00 €</dd>
+                            <dt>Total de monedas</dt>
+                            <dd id="resumenMonedas">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
-                            <dt>Total en billetes</dt>
-                            <dd id="resumenBilletes">0.00 €</dd>
+                            <dt>Total de billetes</dt>
+                            <dd id="resumenBilletes">0,00 €</dd>
                         </div>
                         <div class="resumen__fila resumen__fila--destacada">
-                            <dt>Total efectivo contado</dt>
-                            <dd id="resumenTotalContado">0.00 €</dd>
+                            <dt>Total del contador</dt>
+                            <dd id="resumenTotalContado">0,00 €</dd>
                         </div>
                     </dl>
                 </div>
@@ -620,31 +673,36 @@
                         </div>
                         <div class="resumen__fila">
                             <dt>Total del día</dt>
-                            <dd id="resumenTotalDia">0.00 €</dd>
+                            <dd id="resumenTotalDia">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
                             <dt>Visa</dt>
-                            <dd id="resumenVisa">0.00 €</dd>
+                            <dd id="resumenVisa">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
                             <dt>Uber</dt>
-                            <dd id="resumenUber">0.00 €</dd>
+                            <dd id="resumenUber">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
                             <dt>Gastos</dt>
-                            <dd id="resumenGastos">0.00 €</dd>
+                            <dd id="resumenGastos">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
                             <dt>Efectivo teórico</dt>
-                            <dd id="resumenEfectivoTeorico">0.00 €</dd>
+                            <dd id="resumenEfectivoTeorico">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
                             <dt>Efectivo real</dt>
-                            <dd id="resumenEfectivoReal">0.00 €</dd>
+                            <dd id="resumenEfectivoReal">0,00 €</dd>
                         </div>
-                        <div class="resumen__fila resumen__fila--destacada">
+                        <!-- El resto entra en la diferencia: se muestra junto a ella (y sale en el PDF) -->
+                        <div class="resumen__fila">
+                            <dt>+ Resto fuera del fondo</dt>
+                            <dd class="js-resto-fondo">0,00 €</dd>
+                        </div>
+                        <div class="resumen__fila resumen__fila--destacada js-diferencia">
                             <dt>Diferencia</dt>
-                            <dd id="resumenDiferencia">0.00 €</dd>
+                            <dd>—</dd>
                         </div>
                     </dl>
                 </div>
@@ -654,48 +712,54 @@
                     <dl class="resumen__lista">
                         <div class="resumen__fila">
                             <dt>Fondo actual</dt>
-                            <dd id="resumenFondoActual">0.00 €</dd>
+                            <dd id="resumenFondoActual">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
-                            <dt>Suma de monedas</dt>
-                            <dd id="resumenSumaMonedas">0.00 €</dd>
+                            <dt>Total de monedas</dt>
+                            <dd id="resumenSumaMonedas">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
                             <dt>Total disponible</dt>
-                            <dd id="resumenTotalDisponible">0.00 €</dd>
+                            <dd id="resumenTotalDisponible">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
-                            <dt>Fondo final</dt>
-                            <dd id="resumenFondoFinal">0.00 €</dd>
+                            <dt>Fondo final (múltiplo de 5)</dt>
+                            <dd id="resumenFondoFinal">0,00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Resto fuera del fondo</dt>
+                            <dd class="js-resto-fondo">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
                             <dt>Fondo objetivo</dt>
-                            <dd id="resumenFondoObjetivo">0.00 €</dd>
+                            <dd id="resumenFondoObjetivo">0,00 €</dd>
                         </div>
-                        <div class="resumen__fila resumen__fila--destacada">
+                        <div class="resumen__fila resumen__fila--destacada js-a-ingresar">
                             <dt>A ingresar para completar el fondo</dt>
-                            <dd id="resumenAIngresar">0.00 €</dd>
+                            <dd>— €</dd>
                         </div>
                     </dl>
                 </div>
+                </div>
+                </details>
             </div>
 
             <div class="resumen__acciones">
+                <button type="button" class="boton-secundario" onclick="nuevoCierre()">
+                    Nuevo cierre
+                </button>
                 <button type="button" class="boton-descarga" onclick="descargarResumen()">
                     Descargar resumen (PDF)
                 </button>
             </div>
+            <p class="resumen__nota-pdf">Se abrirá la ventana de impresión: elige «Guardar como PDF».</p>
         </section>
 
     </main>
 
     <footer class="total" id="total">
-        <div class="total__desglose">
-            <span><span id="miniMonedas">0.00</span>€ en monedas</span>
-            <span class="total__separador">+</span>
-            <span><span id="miniBilletes">0.00</span>€ en billetes</span>
-        </div>
-        <p class="total__cifra"><span class="total__etiqueta">Total</span> <span id="totalGeneral">0.00</span>€</p>
+        <span class="total__etiqueta">Total del contador</span>
+        <span class="total__cifra" id="totalGeneral">0,00 €</span>
     </footer>
 
     <script src="script.js"></script>
