@@ -264,12 +264,38 @@ function calcularFondo() {
     return { fondoActual, sumaMonedas, totalDisponible, fondoFinal, resto, fondoObjetivo, aIngresar };
 }
 
+// ---------- Resaltar una cifra que acaba de cambiar ----------
+// Es la forma de "ver" el contador sin una barra fija: la cifra que cambia
+// hace un destello breve (clase .is-resaltado, animación en el CSS).
+// Para repetir la animación hay que quitar la clase, forzar un reflow
+// (leer offsetWidth obliga al navegador a recalcular) y volver a ponerla.
+function resaltarCambio(elemento) {
+    elemento.classList.remove("is-resaltado");
+    void elemento.offsetWidth;
+    elemento.classList.add("is-resaltado");
+}
+
+// Escribe un importe y lo resalta, pero solo si su valor ha cambiado.
+// Se compara el valor en céntimos (guardado en data-centimos), no el texto:
+// el "0,00 €" del HTML lleva un espacio normal y el de Intl uno que no se
+// parte, así que los textos nunca serían iguales.
+// La primera vez (al cargar la página) no hay valor anterior: no se resalta.
+function escribirImporteResaltado(elemento, centimos) {
+    const anterior = elemento.dataset.centimos;
+    elemento.dataset.centimos = centimos;
+    elemento.textContent = formatearCentimos(centimos);
+
+    if (anterior !== undefined && Number(anterior) !== centimos) {
+        resaltarCambio(elemento);
+    }
+}
+
 // ---------- Cálculo principal ----------
 // Escribe el total de cada fila de un panel (p. ej. "resultado1", "resultado2"...)
 function mostrarFilas(valores, prefijoCantidad, prefijoResultado) {
     valores.forEach((valor, i) => {
         const total = totalPiezaCentimos(`${prefijoCantidad}${i + 1}`, valor);
-        document.getElementById(`${prefijoResultado}${i + 1}`).textContent = formatearCentimos(total);
+        escribirImporteResaltado(document.getElementById(`${prefijoResultado}${i + 1}`), total);
     });
 }
 
@@ -277,28 +303,14 @@ function calcularTotal() {
     mostrarFilas(MONEDAS_CENTIMOS, "numero", "resultado");
     mostrarFilas(BILLETES_CENTIMOS, "billete", "resultadoB");
 
-    const subtotalMonedas = monedasCentimos();
-    const subtotalBilletes = billetesCentimos();
+    // Totales al final de cada panel
+    escribirImporteResaltado(document.getElementById("subtotalMonedas"), monedasCentimos());
+    escribirImporteResaltado(document.getElementById("subtotalBilletes"), billetesCentimos());
 
-    // Subtotales por panel
-    document.getElementById("subtotalMonedas").textContent = formatearCentimos(subtotalMonedas);
-    document.getElementById("subtotalBilletes").textContent = formatearCentimos(subtotalBilletes);
-
-    // Total general (monedas + billetes)
-    const totalGeneral = subtotalMonedas + subtotalBilletes;
-    const spanTotal = document.getElementById("totalGeneral");
-    const totalAnterior = spanTotal.textContent;
-    spanTotal.textContent = formatearCentimos(totalGeneral);
-
-    if (totalAnterior !== spanTotal.textContent) {
-        const cifra = document.querySelector(".total__cifra");
-        cifra.classList.remove("is-actualizado");
-        // Forzar reflow para poder reiniciar la animación
-        void cifra.offsetWidth;
-        cifra.classList.add("is-actualizado");
-        clearTimeout(cifra._temporizador);
-        cifra._temporizador = setTimeout(() => cifra.classList.remove("is-actualizado"), 180);
-    }
+    // "Total del contador" (monedas + billetes) sale al final de los dos paneles
+    document.querySelectorAll(".js-total-contador").forEach((elemento) => {
+        escribirImporteResaltado(elemento, efectivoContadoCentimos());
+    });
 
     calcularCierre();
     actualizarFondo();
@@ -615,8 +627,6 @@ function inicializarPasos() {
         enlaces.forEach((enlace) => {
             enlace.classList.toggle("is-activo", enlace.dataset.paso === pasoActivo);
         });
-        // La barra "Total del contador" solo tiene sentido mientras se cuenta
-        mostrarBarraTotal(pasoActivo === "efectivo");
     }
 
     enlaces.forEach((enlace) => {
@@ -674,35 +684,6 @@ function inicializarPasos() {
     }
 }
 
-// ---------- Barra inferior fija vs. teclado en iOS ----------
-// En iOS Safari, position:fixed se ancla al viewport de layout (la página
-// completa), no al viewport visual (lo que realmente se ve por encima del
-// teclado/barra de autorrelleno). Sin este ajuste, la barra de total queda
-// tapada o duplicada visualmente cuando se abre el teclado.
-//
-// El solape se redondea y solo se aplica a partir de 1 px: en escritorio o con
-// zoom salían valores como 0.4 px, y un translateY de medio píxel emborrona
-// el texto sin aportar nada.
-function ajustarBarraTotal() {
-    const total = document.getElementById("total");
-    if (!total || !window.visualViewport) return;
-
-    const vv = window.visualViewport;
-    const solape = Math.round(window.innerHeight - (vv.height + vv.offsetTop));
-    const visible = !total.classList.contains("is-oculto");
-    total.style.transform = visible && solape >= 1 ? `translateY(-${solape}px)` : "";
-}
-
-// Muestra u oculta la barra y el hueco que reserva al final de la página
-function mostrarBarraTotal(visible) {
-    const total = document.getElementById("total");
-    if (!total) return;
-
-    total.classList.toggle("is-oculto", !visible);
-    document.body.classList.toggle("con-barra-total", visible);
-    ajustarBarraTotal();
-}
-
 // ---------- Inicialización ----------
 document.addEventListener("DOMContentLoaded", () => {
     animarEtiquetaCabecera();
@@ -710,9 +691,4 @@ document.addEventListener("DOMContentLoaded", () => {
     calcularTotal();
     calcularCierre();
     inicializarPasos();
-
-    if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", ajustarBarraTotal);
-        window.visualViewport.addEventListener("scroll", ajustarBarraTotal);
-    }
 });
