@@ -127,6 +127,16 @@ body {
     .pasos__etiqueta {
         display: none;
     }
+
+    /* En móvil solo cabe un nombre: el del paso activo, que ocupa más ancho */
+    .pasos__paso.is-activo {
+        flex-grow: 2;
+        gap: 6px;
+    }
+
+    .pasos__paso.is-activo .pasos__etiqueta {
+        display: inline;
+    }
 }
 
 /* ---------- Sección "Datos del cierre" ---------- */
@@ -141,6 +151,43 @@ body {
     color: var(--tinta);
     margin: 0 0 14px;
 }
+
+/* Los títulos reciben el foco al usar "Siguiente" (tabindex="-1").
+   Sin contorno si el foco llega por ratón o toque; con teclado sí se ve. */
+.seccion__titulo:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ---------- Botón "Siguiente" al final de los pasos 1, 2 y 3 ---------- */
+.siguiente-paso {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.siguiente-paso .boton-secundario {
+    gap: 8px;
+}
+
+.siguiente-paso__flecha {
+    line-height: 1;
+}
+
+@media (max-width: 480px) {
+    .siguiente-paso .boton-secundario {
+        flex: 1 1 100%;
+    }
+}
+
+/* ---------- Estado del cierre bajo el título del paso 4 ---------- */
+.estado-cierre {
+    margin: -6px 0 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--tinta-suave);
+}
+
 
 .seccion__titulo-nota {
     display: inline-block;
@@ -178,6 +225,11 @@ body {
     font-weight: 400;
     color: var(--tinta-suave);
     opacity: 0.8;
+}
+
+/* Variante para la ayuda que va bajo el input (no entre etiqueta e input) */
+.campo__ayuda--debajo {
+    margin: 2px 0 0;
 }
 
 .campo-par {
@@ -237,6 +289,11 @@ body {
     margin-bottom: 24px;
 }
 
+/* Dentro de un formulario la separación ya la da el "gap" del formulario */
+.formulario .resultado-parcial {
+    margin-bottom: 0;
+}
+
 .resultado-parcial__etiqueta {
     font-size: 0.9rem;
     font-weight: 600;
@@ -250,6 +307,30 @@ body {
     color: var(--tinta);
     white-space: nowrap;
     transition: color 150ms ease;
+}
+
+.resultado-parcial__ayuda {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--tinta-suave);
+    opacity: 0.8;
+}
+
+/* Mensajes de validación en lenguaje sencillo */
+.aviso {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--alerta-fondo);
+    color: var(--alerta);
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.aviso[hidden] {
+    display: none;
 }
 
 .resultado-parcial__cifra .cifra__moneda {
@@ -304,6 +385,14 @@ body {
     text-wrap: balance;
 }
 
+/* Frase que explica el veredicto (gris, como el resto de ayudas) */
+.resultado-final__significado {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--tinta-suave);
+    margin: 8px 0 0;
+}
+
 .resultado-final__sub {
     font-size: 0.76rem;
     color: var(--tinta-suave);
@@ -355,9 +444,38 @@ body {
     display: none;
 }
 
-.fondo-resumen__linea span:last-child {
+.fondo-resumen__linea > span:last-child {
     color: var(--tinta);
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* "+" y "=" en una columna fija para que la suma se lea de arriba abajo */
+.fondo-resumen__operador {
+    display: inline-block;
+    width: 1ch;
+    margin-right: 4px;
+    color: var(--salvia-oscuro);
+}
+
+/* Línea del resultado de la suma, separada como en una cuenta escrita */
+.fondo-resumen__linea--suma {
+    padding-top: 8px;
+    border-top: 1px solid var(--linea);
+}
+
+.fondo-resumen__linea--destacada {
+    margin-top: 4px;
+    color: var(--salvia-profundo);
+    font-weight: 700;
+}
+
+.fondo-resumen__resto[hidden] {
+    display: none;
+}
+
+.fondo-resumen__resto .campo__ayuda {
+    margin: 2px 0 0;
 }
 
 
@@ -463,10 +581,139 @@ body {
     font-size: 1.05rem;
 }
 
+/* Diferencia del resumen con el mismo color que el resultado del paso 2 */
+.resumen__fila[data-estado="cuadrada"] dd,
+.resumen__fila[data-estado="sobra"] dd {
+    color: var(--exito);
+}
+
+.resumen__fila[data-estado="falta"] dd {
+    color: var(--alerta);
+}
+
+/* Tarjeta con lo esencial: las dos filas destacadas, separadas por una línea */
+.resumen__tarjeta--esencial .resumen__fila {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--linea);
+}
+
+.resumen__tarjeta--esencial .resumen__fila:last-child {
+    border-bottom: none;
+}
+
+/* ---------- Desglose plegable ---------- */
+.resumen__desglose-boton {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--linea);
+    border-radius: 10px;
+    background: var(--superficie);
+    color: var(--salvia-oscuro);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.resumen__desglose-boton::-webkit-details-marker {
+    display: none;
+}
+
+/* Flecha que gira al abrir */
+.resumen__desglose-boton::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 200ms var(--ease-out);
+}
+
+.resumen__desglose[open] .resumen__desglose-boton::after {
+    transform: translateY(2px) rotate(-135deg);
+}
+
+.resumen__desglose-ocultar,
+.resumen__desglose[open] .resumen__desglose-ver {
+    display: none;
+}
+
+.resumen__desglose[open] .resumen__desglose-ocultar {
+    display: inline;
+}
+
+.resumen__desglose-boton:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(63, 78, 75, 0.2);
+    border-color: var(--salvia-oscuro);
+}
+
+.resumen__desglose-contenido {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
 .resumen__acciones {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
+    gap: 10px;
     margin-top: 14px;
+}
+
+/* Botón secundario (Nuevo cierre): mismo tamaño que el de descarga, sin relleno */
+.boton-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 11px 18px;
+    border: 1px solid var(--linea);
+    border-radius: 10px;
+    background: var(--superficie);
+    color: var(--salvia-oscuro);
+    font-family: "Manrope", sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color 160ms var(--ease-out), transform 100ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .boton-secundario:hover {
+        border-color: var(--salvia-oscuro);
+    }
+}
+
+.boton-secundario:active {
+    transform: scale(0.97);
+}
+
+/* Aclara que el botón abre la ventana de impresión del navegador */
+.resumen__nota-pdf {
+    margin: 8px 0 0;
+    font-size: 0.75rem;
+    color: var(--tinta-suave);
+    opacity: 0.8;
+    text-align: right;
+}
+
+/* En móvil no caben en una fila: cada botón ocupa todo el ancho */
+@media (max-width: 480px) {
+    .resumen__acciones > button {
+        flex: 1 1 100%;
+    }
+
+    .resumen__nota-pdf {
+        text-align: center;
+    }
 }
 
 .boton-descarga {
@@ -510,6 +757,10 @@ body {
     #seccionFondo,
     #tituloResumen,
     .resumen__acciones,
+    .resumen__nota-pdf,
+    .siguiente-paso,
+    .estado-cierre,
+    .resumen__desglose-boton,
     .total {
         display: none !important;
     }
@@ -700,7 +951,17 @@ body {
 .main {
     max-width: 640px;
     margin: 0 auto;
-    padding: 28px 24px 168px;
+    padding: 28px 24px 48px;
+}
+
+/* Hueco extra solo mientras la barra "Total del contador" está visible */
+body.con-barra-total .main {
+    padding-bottom: 96px;
+}
+
+/* Al enfocar un campo del contador, que el navegador lo deje por encima de la barra */
+.pieza__input {
+    scroll-margin-bottom: 72px;
 }
 
 .main__intro {
@@ -969,48 +1230,47 @@ body {
     margin: 16px 4px 0;
 }
 
-/* ---------- Sticky total ---------- */
+/* ---------- Barra fija "Total del contador" (solo en el paso 1) ---------- */
 .total {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 20;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 24px;
     background: var(--superficie);
     border-top: 1px solid var(--linea);
     box-shadow: 0 -6px 16px rgba(16, 24, 40, 0.05);
-    padding: 16px 24px 20px;
-    text-align: center;
+    /* "translate" es independiente del "transform" inline del ajuste de iOS */
+    transition: translate 200ms var(--ease-out), visibility 0s;
 }
 
-.total__desglose {
-    font-size: 0.8rem;
-    color: var(--tinta-suave);
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 4px;
-}
-
-.total__separador {
-    color: var(--salvia-oscuro);
-}
-
-.total__cifra {
-    font-family: "Manrope", sans-serif;
-    font-weight: 600;
-    font-size: 2.1rem;
-    color: var(--tinta);
-    margin: 0;
-    transition: transform 140ms var(--ease-out);
+/* Oculta por completo fuera del paso 1: sale por abajo y deja de ser accesible */
+.total.is-oculto {
+    translate: 0 calc(100% + 16px);
+    visibility: hidden;
+    transition: translate 200ms var(--ease-out), visibility 0s 200ms;
 }
 
 .total__etiqueta {
-    font-family: "Manrope", sans-serif;
+    font-size: 0.9rem;
     font-weight: 600;
-    font-size: 0.95rem;
     color: var(--tinta-suave);
-    vertical-align: middle;
+}
+
+.total__cifra {
+    display: inline-block;
+    font-family: "Manrope", sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--tinta);
+    white-space: nowrap;
+    transition: transform 140ms var(--ease-out);
 }
 
 .total__cifra.is-actualizado {
@@ -1022,6 +1282,10 @@ body {
     .selector__realce,
     .selector__opcion,
     .boton-descarga,
+    .boton-secundario,
+    .resumen__desglose-boton::after,
+    .total,
+    .total.is-oculto,
     .total__cifra {
         transition: none;
     }
