@@ -760,8 +760,7 @@ body {
     .resumen__nota-pdf,
     .siguiente-paso,
     .estado-cierre,
-    .resumen__desglose-boton,
-    .total {
+    .resumen__desglose-boton {
         display: none !important;
     }
 
@@ -954,14 +953,10 @@ body {
     padding: 28px 24px 48px;
 }
 
-/* Hueco extra solo mientras la barra "Total del contador" está visible */
-body.con-barra-total .main {
-    padding-bottom: 96px;
-}
-
-/* Al enfocar un campo del contador, que el navegador lo deje por encima de la barra */
+/* Al enfocar un campo del contador, que el navegador lo deje por debajo
+   de la barra de pasos (fija arriba) y no tapado por ella */
 .pieza__input {
-    scroll-margin-bottom: 72px;
+    scroll-margin-top: 72px;
 }
 
 .main__intro {
@@ -1230,51 +1225,72 @@ body.con-barra-total .main {
     margin: 16px 4px 0;
 }
 
-/* ---------- Barra fija "Total del contador" (solo en el paso 1) ---------- */
-.total {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 20;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 0 24px;
-    background: var(--superficie);
-    border-top: 1px solid var(--linea);
-    box-shadow: 0 -6px 16px rgba(16, 24, 40, 0.05);
-    /* "translate" es independiente del "transform" inline del ajuste de iOS */
-    transition: translate 200ms var(--ease-out), visibility 0s;
-}
-
-/* Oculta por completo fuera del paso 1: sale por abajo y deja de ser accesible */
-.total.is-oculto {
-    translate: 0 calc(100% + 16px);
-    visibility: hidden;
-    transition: translate 200ms var(--ease-out), visibility 0s 200ms;
-}
-
-.total__etiqueta {
-    font-size: 0.9rem;
+/* Segunda línea: total de monedas + billetes, algo más destacada */
+.panel__subtotal--contador {
+    margin-top: 10px;
     font-weight: 600;
-    color: var(--tinta-suave);
+    color: var(--salvia-profundo);
 }
 
-.total__cifra {
+/* ---------- Destello de una cifra que acaba de cambiar ---------- */
+/* Sustituye a la barra fija: el usuario ve el cambio justo donde mira.
+   inline-block hace falta para poder escalar un <span>. */
+.pieza__subtotal span,
+.panel__subtotal span {
     display: inline-block;
-    font-family: "Manrope", sans-serif;
-    font-weight: 700;
-    font-size: 1.25rem;
-    color: var(--tinta);
-    white-space: nowrap;
-    transition: transform 140ms var(--ease-out);
+    border-radius: 4px;
 }
 
-.total__cifra.is-actualizado {
-    transform: scale(1.03);
+/* Separa la cifra de los dos puntos de la etiqueta, para que el destello no los toque */
+.panel__subtotal span {
+    margin-left: 4px;
+}
+
+/* Color del destello: mostaza suave (el acento de la marca), que se
+   distingue bien sobre el blanco de las tarjetas */
+:root {
+    --destello: color-mix(in srgb, var(--mostaza) 24%, transparent);
+}
+
+/* Dura 900 ms: se mantiene marcado un instante (hasta el 35 %) y luego
+   se desvanece, para que dé tiempo a verlo mientras se teclea */
+.is-resaltado {
+    animation: resaltar-cifra 900ms ease-out;
+}
+
+/* box-shadow (en vez de padding) da el fondo sin mover el texto de sitio */
+@keyframes resaltar-cifra {
+    0% {
+        color: var(--salvia-profundo);
+        background-color: var(--destello);
+        box-shadow: 0 0 0 4px var(--destello);
+        transform: scale(1.1);
+    }
+    35% {
+        color: var(--salvia-profundo);
+        background-color: var(--destello);
+        box-shadow: 0 0 0 4px var(--destello);
+        transform: scale(1);
+    }
+    100% {
+        background-color: transparent;
+        box-shadow: 0 0 0 4px transparent;
+        transform: scale(1);
+    }
+}
+
+/* Con "reducir movimiento": solo el color, sin crecer */
+@keyframes resaltar-cifra-sin-movimiento {
+    0%,
+    35% {
+        color: var(--salvia-profundo);
+        background-color: var(--destello);
+        box-shadow: 0 0 0 4px var(--destello);
+    }
+    100% {
+        background-color: transparent;
+        box-shadow: 0 0 0 4px transparent;
+    }
 }
 
 /* ---------- Motion & accessibility ---------- */
@@ -1283,11 +1299,12 @@ body.con-barra-total .main {
     .selector__opcion,
     .boton-descarga,
     .boton-secundario,
-    .resumen__desglose-boton::after,
-    .total,
-    .total.is-oculto,
-    .total__cifra {
+    .resumen__desglose-boton::after {
         transition: none;
+    }
+
+    .is-resaltado {
+        animation-name: resaltar-cifra-sin-movimiento;
     }
 
     .cabecera__etiqueta,
