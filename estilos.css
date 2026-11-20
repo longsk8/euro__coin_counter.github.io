@@ -13,12 +13,24 @@
     --mostaza: #CE871E;
     --exito: #1E7A4C;
     --exito-fondo: #E7F3ED;
+    /* Rojo: SOLO para errores de datos (avisos) */
     --alerta: #B3261E;
     --alerta-fondo: #FBEAE8;
+    /* Ámbar (familia de la mostaza) para Sobran y Faltan: los dos son descuadre.
+       Texto oscuro para el contraste: 5,38:1 sobre su fondo, 5,92:1 sobre blanco. */
+    --descuadre: #8A5A0B;
+    --descuadre-fondo: #FDF3E1;
     --texto-print: #232220;
 
     --papel: #FFFFFF;
     --papel-suave: #ECE9E3;
+
+    /* Relleno de los inputs dentro de las tarjetas blancas */
+    --relleno-input: #F4F2EE;
+    --radio-tarjeta: 20px;
+    --radio-control: 14px;
+    --sombra-tarjeta: 0 1px 2px rgba(42, 54, 52, 0.05), 0 8px 24px rgba(42, 54, 52, 0.06);
+    --anillo-foco: 0 0 0 4px rgba(63, 78, 75, 0.16);
 
     --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -31,6 +43,22 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Foco visible y uniforme al navegar con teclado (botones, pasos, enlaces).
+   Los inputs tienen su propio anillo de foco más abajo. */
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+    outline: 2px solid var(--salvia-oscuro);
+    outline-offset: 2px;
+}
+
+/* Sobre botones rellenos de salvia oscuro, el contorno se separa más */
+.boton-descarga:focus-visible,
+.siguiente-paso .boton-secundario:focus-visible,
+.selector__opcion.is-activa:focus-visible {
+    outline-offset: 3px;
+}
+
 body {
     font-family: "Manrope", sans-serif;
     margin: 0;
@@ -41,14 +69,59 @@ body {
 }
 
 /* ---------- Indicador de progreso ---------- */
-.pasos {
+/* Lo pegajoso es el contenedor: así los pasos y la franja del contador
+   se mueven juntos y su alto se mide de una vez (alturaBarraPasos) */
+.barra-superior {
     position: sticky;
     top: 0;
     z-index: 10;
-    display: flex;
-    background: var(--superficie);
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--linea);
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.pasos {
+    display: flex;
+    gap: 4px;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 6px 8px;
+}
+
+/* ---------- Franja del total contado (solo en el paso 1) ----------
+   Cuelga justo debajo de la barra (position: absolute) sin ocupar sitio:
+   si ocupara sitio, al ocultarse en el paso 2 toda la página saltaría hacia arriba. */
+.franja-contador {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px max(20px, calc((100% - 600px) / 2)) 8px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--linea);
+    box-shadow: 0 4px 12px rgba(42, 54, 52, 0.06);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--salvia-oscuro);
+}
+
+.franja-contador[hidden] {
+    display: none;
+}
+
+.franja-contador__cifra {
+    display: inline-block; /* para que el destello pueda escalarla */
+    border-radius: 4px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--salvia-profundo);
 }
 
 .pasos__paso {
@@ -57,21 +130,22 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 12px 8px;
+    min-height: 44px;
+    padding: 8px;
+    border-radius: 12px;
     text-decoration: none;
     color: var(--tinta-suave);
     font-size: 0.85rem;
     font-weight: 600;
-    border-bottom: 3px solid transparent;
-    transition: color 200ms var(--ease-out), border-color 200ms var(--ease-out);
+    transition: color 200ms var(--ease-out), background 200ms var(--ease-out);
 }
 
 .pasos__numero {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     border: 1.5px solid currentColor;
     font-size: 0.72rem;
@@ -94,9 +168,10 @@ body {
     color: #FFFFFF;
 }
 
+/* El paso activo es una píldora salvia clara, como un segmento seleccionado */
 .pasos__paso.is-activo {
     color: var(--salvia-profundo);
-    border-bottom-color: var(--salvia-oscuro);
+    background: var(--salvia-claro);
 }
 
 .pasos__paso.is-activo .pasos__numero {
@@ -109,7 +184,7 @@ body {
 #seccionDatos,
 #seccionFondo,
 #seccionResumen {
-    scroll-margin-top: 56px;
+    scroll-margin-top: 72px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -121,7 +196,7 @@ body {
 @media (max-width: 520px) {
     .pasos__paso {
         gap: 0;
-        padding: 12px 4px;
+        padding: 8px 4px;
     }
 
     .pasos__etiqueta {
@@ -141,15 +216,35 @@ body {
 
 /* ---------- Sección "Datos del cierre" ---------- */
 .seccion {
-    margin-top: 32px;
+    margin-top: 40px;
 }
 
+/* Título de paso: insignia con el número + nombre; la nota va debajo */
 .seccion__titulo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 12px;
     font-family: "Manrope", sans-serif;
-    font-weight: 600;
-    font-size: 1.2rem;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.01em;
     color: var(--tinta);
-    margin: 0 0 14px;
+    margin: 0 0 16px;
+}
+
+.seccion__num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: var(--salvia-oscuro);
+    color: #FFFFFF;
+    font-size: 0.95rem;
+    font-weight: 800;
+    flex-shrink: 0;
 }
 
 /* Los títulos reciben el foco al usar "Siguiente" (tabindex="-1").
@@ -159,51 +254,77 @@ body {
 }
 
 /* ---------- Botón "Siguiente" al final de los pasos 1, 2 y 3 ---------- */
+/* Es la acción principal de cada paso: botón relleno, a todo el ancho */
 .siguiente-paso {
     display: flex;
-    justify-content: flex-end;
     margin-top: 20px;
 }
 
 .siguiente-paso .boton-secundario {
+    flex: 1 1 100%;
     gap: 8px;
+    min-height: 52px;
+    border: none;
+    border-radius: var(--radio-control);
+    background: var(--salvia-oscuro);
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 6px 16px rgba(42, 54, 52, 0.18);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .siguiente-paso .boton-secundario:hover {
+        background: var(--salvia-profundo);
+    }
 }
 
 .siguiente-paso__flecha {
     line-height: 1;
 }
 
-@media (max-width: 480px) {
-    .siguiente-paso .boton-secundario {
-        flex: 1 1 100%;
-    }
-}
-
 /* ---------- Estado del cierre bajo el título del paso 4 ---------- */
+/* Pendiente: neutro (falta información, no es un error).
+   Completo: salvia, el color de la marca (no verde: no juzga el resultado). */
 .estado-cierre {
-    margin: -6px 0 16px;
-    font-size: 0.85rem;
-    font-weight: 500;
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: var(--radio-control);
+    background: var(--superficie-hundida);
+    font-size: 0.88rem;
+    font-weight: 600;
     line-height: 1.4;
     color: var(--tinta-suave);
 }
 
-
-.seccion__titulo-nota {
-    display: inline-block;
-    font-family: "Manrope", sans-serif;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    color: var(--tinta-suave);
-    margin-left: 4px;
+.estado-cierre[data-estado="completo"] {
+    background: var(--salvia-claro);
+    color: var(--salvia-profundo);
 }
 
+
+/* Subtítulo bajo el nombre del paso, alineado con el texto (no con la insignia) */
+.seccion__titulo-nota {
+    flex-basis: 100%;
+    padding-left: 44px;
+    margin-top: 2px;
+    font-family: "Manrope", sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--tinta-suave);
+}
+
+/* Cada formulario es una tarjeta blanca: deja de parecer un formulario suelto */
 .formulario {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-bottom: 18px;
+    gap: 18px;
+    margin-bottom: 16px;
+    padding: 20px;
+    background: var(--superficie);
+    border-radius: var(--radio-tarjeta);
+    box-shadow: var(--sombra-tarjeta);
 }
 
 .campo {
@@ -215,8 +336,8 @@ body {
 
 .campo label {
     font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--tinta-suave);
+    font-weight: 700;
+    color: var(--tinta);
 }
 
 .campo__ayuda {
@@ -224,7 +345,6 @@ body {
     font-size: 0.75rem;
     font-weight: 400;
     color: var(--tinta-suave);
-    opacity: 0.8;
 }
 
 /* Variante para la ayuda que va bajo el input (no entre etiqueta e input) */
@@ -241,22 +361,38 @@ body {
     margin-top: auto;
 }
 
+/* Input relleno sin borde visible; al enfocarlo se vuelve blanco con anillo salvia */
 .campo__input {
     width: 100%;
-    border: 1px solid var(--linea);
-    border-radius: 10px;
-    padding: 13px 14px;
+    min-height: 54px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radio-control);
+    padding: 14px 16px;
     font-family: "Manrope", sans-serif;
-    font-size: 1.05rem;
-    font-weight: 600;
+    font-size: 1.15rem;
+    font-weight: 700;
     color: var(--tinta);
-    background: var(--superficie);
+    background: var(--relleno-input);
     outline: none;
+    transition: background 160ms var(--ease-out), border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
 }
 
-.campo__input:focus-visible {
+.campo__input::placeholder {
+    color: #736E67; /* 4,52:1 sobre el relleno del input */
+    font-weight: 600;
+}
+
+.campo__input:focus {
+    background: var(--superficie);
     border-color: var(--salvia-oscuro);
-    box-shadow: 0 0 0 3px rgba(63, 78, 75, 0.2);
+    box-shadow: var(--anillo-foco);
+}
+
+/* Campo vacío que impide ver el resultado: borde mostaza suave (nunca rojo,
+   el rojo es para errores). Al enfocarlo manda el estilo de foco normal. */
+.campo__input.is-bloqueante:not(:focus) {
+    border-color: #B07416; /* mostaza más oscura: 3,51:1, visible como borde */
+    border-style: dashed;
 }
 
 .campo__moneda {
@@ -266,13 +402,13 @@ body {
 }
 
 .campo__moneda .campo__input {
-    padding-right: 34px;
+    padding-right: 38px;
 }
 
 .campo__sufijo {
     position: absolute;
-    right: 14px;
-    font-weight: 600;
+    right: 16px;
+    font-weight: 700;
     color: var(--tinta-suave);
     pointer-events: none;
 }
@@ -283,9 +419,9 @@ body {
     align-items: baseline;
     justify-content: space-between;
     gap: 4px 12px;
-    background: var(--superficie-hundida);
-    border-radius: 10px;
-    padding: 14px 16px;
+    background: var(--salvia-claro);
+    border-radius: 16px;
+    padding: 16px 18px;
     margin-bottom: 24px;
 }
 
@@ -295,16 +431,17 @@ body {
 }
 
 .resultado-parcial__etiqueta {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--tinta-suave);
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--salvia-oscuro);
 }
 
 .resultado-parcial__cifra {
     font-family: "Manrope", sans-serif;
-    font-weight: 600;
-    font-size: 1.4rem;
-    color: var(--tinta);
+    font-weight: 800;
+    font-size: 1.6rem;
+    letter-spacing: -0.01em;
+    color: var(--salvia-profundo);
     white-space: nowrap;
     transition: color 150ms ease;
 }
@@ -313,8 +450,7 @@ body {
     flex-basis: 100%;
     margin: 0;
     font-size: 0.75rem;
-    color: var(--tinta-suave);
-    opacity: 0.8;
+    color: var(--salvia-oscuro);
 }
 
 /* Mensajes de validación en lenguaje sencillo */
@@ -333,6 +469,12 @@ body {
     display: none;
 }
 
+/* Falta un dato (no es un error): nota neutra en salvia, nunca roja */
+.aviso--info {
+    background: var(--salvia-claro);
+    color: var(--salvia-profundo);
+}
+
 .resultado-parcial__cifra .cifra__moneda {
     font-family: "Manrope", sans-serif;
     font-size: 0.62em;
@@ -342,18 +484,20 @@ body {
 
 @media (max-width: 480px) {
     .resultado-parcial__cifra {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
     }
 }
 
 /* ---------- Resultado final (el dato que importa) ---------- */
+/* Tarjeta protagonista: cifra muy grande, color según el veredicto */
 .resultado-final {
-    border-radius: 14px;
-    padding: 16px 20px;
+    border-radius: var(--radio-tarjeta);
+    padding: 24px 20px;
     text-align: center;
-    border: 1px solid var(--linea);
-    background: var(--superficie-hundida);
-    margin-bottom: 24px;
+    border: 1.5px solid transparent;
+    background: var(--superficie);
+    box-shadow: var(--sombra-tarjeta);
+    margin-bottom: 16px;
     transition: background 240ms var(--ease-out), border-color 240ms var(--ease-out);
 }
 
@@ -377,9 +521,10 @@ body {
 
 .resultado-final__cifra {
     font-family: "Manrope", sans-serif;
-    font-weight: 700;
-    font-size: clamp(1.8rem, 6vw, 2.4rem);
-    line-height: 1;
+    font-weight: 800;
+    font-size: clamp(2.4rem, 11vw, 3.2rem);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
     color: var(--tinta);
     margin: 0;
     text-wrap: balance;
@@ -399,36 +544,104 @@ body {
     margin: 8px 0 0;
 }
 
-.resultado-final[data-estado="cuadrada"],
-.resultado-final[data-estado="sobra"] {
+/* Enlaces de "Falta: …": llevan al campo que hay que rellenar */
+.enlace-pendiente {
+    color: var(--salvia-profundo);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--salvia-oscuro) 45%, transparent);
+    text-underline-offset: 3px;
+    border-radius: 4px;
+}
+
+.enlace-pendiente:focus-visible {
+    outline: 2px solid var(--salvia-oscuro);
+    outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .enlace-pendiente:hover {
+        text-decoration-color: currentColor;
+    }
+}
+
+/* Colores del veredicto (los mismos en el paso 3, el paso 4 y el PDF):
+   - Caja cuadrada: verde.
+   - Sobran / Faltan: ámbar los dos (un sobrante también es un descuadre).
+   El rojo queda solo para los avisos de error de datos. */
+.resultado-final[data-estado="cuadrada"] {
     background: var(--exito-fondo);
     border-color: color-mix(in srgb, var(--exito) 35%, transparent);
 }
 
 .resultado-final[data-estado="cuadrada"] .resultado-final__estado,
-.resultado-final[data-estado="sobra"] .resultado-final__estado,
-.resultado-final[data-estado="cuadrada"] .resultado-final__cifra,
-.resultado-final[data-estado="sobra"] .resultado-final__cifra {
+.resultado-final[data-estado="cuadrada"] .resultado-final__cifra {
     color: var(--exito);
 }
 
+.resultado-final[data-estado="sobra"],
 .resultado-final[data-estado="falta"] {
-    background: var(--alerta-fondo);
-    border-color: color-mix(in srgb, var(--alerta) 35%, transparent);
+    background: var(--descuadre-fondo);
+    border-color: color-mix(in srgb, var(--descuadre) 35%, transparent);
 }
 
+.resultado-final[data-estado="sobra"] .resultado-final__estado,
 .resultado-final[data-estado="falta"] .resultado-final__estado,
+.resultado-final[data-estado="sobra"] .resultado-final__cifra,
 .resultado-final[data-estado="falta"] .resultado-final__cifra {
-    color: var(--alerta);
+    color: var(--descuadre);
+}
+
+/* ---------- Icono del veredicto (✓ cuadrada, ! sobran y faltan) ----------
+   Va siempre junto al texto: el veredicto no depende solo del color.
+   El texto tras "/" es el texto alternativo: vacío, porque la palabra
+   (Caja cuadrada / Sobran / Faltan) ya lo dice. */
+.resultado-final[data-estado] .resultado-final__estado::before,
+.resumen__fila[data-estado="cuadrada"] dd::before,
+.resumen__fila[data-estado="sobra"] dd::before,
+.resumen__fila[data-estado="falta"] dd::before {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25em;
+    height: 1.25em;
+    margin-right: 0.35em;
+    border-radius: 50%;
+    background: currentColor;
+    font-size: 0.8em;
+    font-weight: 800;
+    line-height: 1;
+    vertical-align: 0.1em;
+}
+
+.resultado-final[data-estado="cuadrada"] .resultado-final__estado::before,
+.resumen__fila[data-estado="cuadrada"] dd::before {
+    content: "✓";
+    content: "✓" / "";
+}
+
+.resultado-final[data-estado="sobra"] .resultado-final__estado::before,
+.resultado-final[data-estado="falta"] .resultado-final__estado::before,
+.resumen__fila[data-estado="sobra"] dd::before,
+.resumen__fila[data-estado="falta"] dd::before {
+    content: "!";
+    content: "!" / "";
+}
+
+/* El símbolo en blanco sobre el círculo de color: se consigue con
+   -webkit-text-fill-color, porque "color" ya lo usa el círculo (currentColor) */
+.resultado-final[data-estado] .resultado-final__estado::before,
+.resumen__fila[data-estado] dd::before {
+    -webkit-text-fill-color: #FFFFFF;
 }
 
 .fondo-resumen {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    background: var(--superficie-hundida);
-    border-radius: 10px;
-    padding: 12px 14px;
+    gap: 10px;
+    background: var(--relleno-input);
+    border-radius: 16px;
+    padding: 16px 18px;
 }
 
 .fondo-resumen__linea {
@@ -501,10 +714,34 @@ body {
 }
 
 .resumen__empresa {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     font-family: "Manrope", sans-serif;
     font-weight: 600;
     font-size: 1.05rem;
     color: var(--salvia-profundo);
+}
+
+/* El logo original, sin modificar: solo se ajusta su alto */
+.resumen__logo {
+    display: block;
+    height: 30px;
+    width: auto;
+}
+
+/* Elementos que solo salen en el PDF (p. ej. el título "Cierre de caja") */
+.solo-impresion {
+    display: none;
+}
+
+/* Fecha y, debajo, el responsable (alineados a la derecha) */
+.resumen__cabecera-datos {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    text-align: right;
 }
 
 .resumen__fecha {
@@ -513,11 +750,20 @@ body {
     color: var(--tinta-suave);
 }
 
+.resumen__responsable {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--tinta);
+}
+
+.resumen__responsable[hidden] {
+    display: none;
+}
+
 .resumen__tarjeta {
     background: var(--superficie);
-    border: 1px solid var(--linea);
-    border-radius: 14px;
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+    border-radius: var(--radio-tarjeta);
+    box-shadow: var(--sombra-tarjeta);
     overflow: hidden;
 }
 
@@ -526,16 +772,15 @@ body {
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--tinta-suave);
+    color: var(--salvia-oscuro);
     background: var(--salvia-claro);
     margin: 0;
-    padding: 10px 18px;
-    border-bottom: 1px solid var(--linea);
+    padding: 12px 20px;
 }
 
 .resumen__lista {
     margin: 0;
-    padding: 0 18px;
+    padding: 4px 20px;
 }
 
 .resumen__fila {
@@ -543,13 +788,27 @@ body {
     align-items: baseline;
     justify-content: space-between;
     gap: 12px;
-    padding: 8px 0;
+    padding: 11px 0;
     border-bottom: 1px solid var(--linea);
-    font-size: 0.88rem;
+    font-size: 0.9rem;
 }
 
 .resumen__fila:last-child {
     border-bottom: none;
+}
+
+/* display:flex anula el atributo hidden: hay que reforzarlo */
+.resumen__fila[hidden] {
+    display: none;
+}
+
+/* Cifras clave del paso 4: más aire y la diferencia algo más grande */
+.resumen__tarjeta--claves .resumen__fila {
+    padding: 14px 0;
+}
+
+.resumen__tarjeta--claves .js-diferencia dd {
+    font-size: 1.35rem;
 }
 
 .resumen__fila dt {
@@ -578,27 +837,18 @@ body {
 
 .resumen__fila--destacada dd {
     font-family: "Manrope", sans-serif;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
+    font-weight: 800;
 }
 
-/* Diferencia del resumen con el mismo color que el resultado del paso 2 */
-.resumen__fila[data-estado="cuadrada"] dd,
-.resumen__fila[data-estado="sobra"] dd {
+/* Diferencia del resumen con los mismos colores que el resultado del paso 3 */
+.resumen__fila[data-estado="cuadrada"] dd {
     color: var(--exito);
 }
 
+.resumen__fila[data-estado="sobra"] dd,
 .resumen__fila[data-estado="falta"] dd {
-    color: var(--alerta);
-}
-
-/* Tarjeta con lo esencial: las dos filas destacadas, separadas por una línea */
-.resumen__tarjeta--esencial .resumen__fila {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--linea);
-}
-
-.resumen__tarjeta--esencial .resumen__fila:last-child {
-    border-bottom: none;
+    color: var(--descuadre);
 }
 
 /* ---------- Desglose plegable ---------- */
@@ -608,14 +858,14 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-height: 44px;
+    min-height: 48px;
     padding: 10px 14px;
-    border: 1px solid var(--linea);
-    border-radius: 10px;
-    background: var(--superficie);
+    border: 1.5px solid var(--linea);
+    border-radius: var(--radio-control);
+    background: transparent;
     color: var(--salvia-oscuro);
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.92rem;
+    font-weight: 700;
     cursor: pointer;
 }
 
@@ -673,15 +923,15 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 44px;
-    padding: 11px 18px;
-    border: 1px solid var(--linea);
-    border-radius: 10px;
+    min-height: 52px;
+    padding: 12px 20px;
+    border: 1.5px solid var(--linea);
+    border-radius: var(--radio-control);
     background: var(--superficie);
     color: var(--salvia-oscuro);
     font-family: "Manrope", sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-weight: 700;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: border-color 160ms var(--ease-out), transform 100ms var(--ease-out);
 }
@@ -701,7 +951,6 @@ body {
     margin: 8px 0 0;
     font-size: 0.75rem;
     color: var(--tinta-suave);
-    opacity: 0.8;
     text-align: right;
 }
 
@@ -721,15 +970,16 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-height: 44px;
+    min-height: 52px;
     border: none;
     background: var(--salvia-oscuro);
     color: #FFFFFF;
     font-family: "Manrope", sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 11px 18px;
-    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 12px 20px;
+    border-radius: var(--radio-control);
+    box-shadow: 0 6px 16px rgba(42, 54, 52, 0.18);
     cursor: pointer;
     transition: background 160ms var(--ease-out), transform 100ms var(--ease-out);
 }
@@ -745,9 +995,20 @@ body {
 }
 
 /* ---------- Impresión / descarga del resumen ---------- */
+/* El PDF es un informe de una página, en este orden:
+   1. Cabecera: logo, "Cierre de caja", fecha y responsable.
+   2. Resultado (cifras clave): la diferencia bien destacada, con sus colores.
+      Si el cierre está pendiente, un aviso lo dice antes que nada.
+   3. Conteo de efectivo, 4. Cierre del día (resumen económico), 5. Fondo de caja.
+   El desglose se abre solo antes de imprimir (evento beforeprint). */
+@page {
+    size: A4;
+    margin: 14mm 16mm;
+}
+
 @media print {
     .cabecera,
-    .pasos,
+    .barra-superior,
     .main__intro,
     .main > .seccion__titulo,
     #selector,
@@ -759,9 +1020,12 @@ body {
     .resumen__acciones,
     .resumen__nota-pdf,
     .siguiente-paso,
-    .estado-cierre,
     .resumen__desglose-boton {
         display: none !important;
+    }
+
+    .solo-impresion {
+        display: block;
     }
 
     body,
@@ -770,32 +1034,116 @@ body {
         margin: 0;
         padding: 0;
         max-width: 100%;
+        font-size: 10.5pt;
     }
 
     #seccionResumen {
         margin: 0;
     }
 
-    .resumen__tarjeta {
-        display: none !important;
+    /* Aviso de cierre pendiente: solo si falta algo. Con el cierre completo
+       no sale (el informe ya lo dice con el resultado). */
+    .estado-cierre {
+        display: none;
     }
 
-    .resumen__tarjeta--imprimible {
-        display: block !important;
-        border: 1px solid #999;
+    .estado-cierre[data-estado="pendiente"] {
+        display: block;
+        margin: 0;
+        padding: 8px 12px;
+        border: 1.5px solid var(--descuadre);
+        border-radius: 8px;
+        background: var(--descuadre-fondo);
+        color: var(--descuadre);
+        font-weight: 700;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Los enlaces de "faltan …" se leen como texto normal en papel */
+    .enlace-pendiente {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .resumen,
+    .resumen__desglose-contenido {
+        gap: 10px;
+    }
+
+    .resumen__desglose-contenido {
+        margin-top: 10px;
+    }
+
+    .resumen__cabecera {
+        align-items: flex-end;
+        padding: 0 0 8px;
+        border-bottom: 2px solid var(--mostaza);
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .resumen__logo {
+        height: 34px;
+    }
+
+    .resumen__titulo-informe {
+        font-size: 13pt;
+        font-weight: 800;
+        color: var(--tinta);
+    }
+
+    .resumen__fecha,
+    .resumen__responsable {
+        font-size: 10pt;
+    }
+
+    .resumen__tarjeta {
+        border: 1px solid #BDB8AF;
+        border-radius: 8px;
         box-shadow: none;
         break-inside: avoid;
     }
 
     .resumen__tarjeta-titulo {
-        background: none !important;
-        border-bottom: 1px solid #999;
+        padding: 5px 12px;
+        font-size: 8pt;
+        border-bottom: 1px solid #BDB8AF;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
-    .resumen__cabecera {
-        border-bottom-color: var(--tinta);
+    .resumen__lista {
+        padding: 0 12px;
+    }
+
+    .resumen__fila {
+        padding: 4px 0;
+        font-size: 10pt;
+    }
+
+    .resumen__fila--destacada dd {
+        font-size: 11pt;
+    }
+
+    /* Resultado: la tarjeta más destacada del informe */
+    .resumen__tarjeta--claves {
+        border: 2px solid var(--salvia-oscuro);
+    }
+
+    .resumen__tarjeta--claves .resumen__fila {
+        padding: 6px 0;
+    }
+
+    .resumen__tarjeta--claves .js-diferencia dd {
+        font-size: 16pt;
+    }
+
+    /* Que el PDF conserve los colores e iconos del veredicto */
+    .resumen__fila dd,
+    .resumen__fila dd::before {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 }
 
@@ -876,7 +1224,7 @@ body {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(35, 34, 32, 0.68);
+    color: #1A1A18; /* 4,96:1 sobre el salvia (con transparencia no llegaba a 4,5) */
     margin: 0 0 10px;
 }
 
@@ -939,6 +1287,24 @@ body {
     white-space: nowrap;
 }
 
+/* Etiqueta Pendiente / Completo bajo la fecha */
+.cabecera__estado {
+    margin-top: 2px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--superficie-hundida);
+    color: var(--tinta-suave);
+}
+
+.cabecera__estado[data-estado="completo"] {
+    background: var(--salvia-oscuro);
+    color: #FFFFFF;
+}
+
 .cabecera__fecha-icono {
     width: 13px;
     height: 13px;
@@ -950,13 +1316,23 @@ body {
 .main {
     max-width: 640px;
     margin: 0 auto;
-    padding: 28px 24px 48px;
+    padding: 28px 20px 56px;
+}
+
+@media (max-width: 480px) {
+    .main {
+        padding: 24px 16px 48px;
+    }
+
+    .formulario {
+        padding: 18px 16px;
+    }
 }
 
 /* Al enfocar un campo del contador, que el navegador lo deje por debajo
-   de la barra de pasos (fija arriba) y no tapado por ella */
+   de la barra de pasos y de la franja del total (las dos arriba) */
 .pieza__input {
-    scroll-margin-top: 72px;
+    scroll-margin-top: 112px;
 }
 
 .main__intro {
@@ -971,11 +1347,11 @@ body {
     position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    background: var(--superficie-hundida);
-    border: 1px solid var(--linea);
-    border-radius: 12px;
+    background: var(--superficie);
+    border-radius: 16px;
+    box-shadow: var(--sombra-tarjeta);
     padding: 4px;
-    margin-bottom: 28px;
+    margin-bottom: 20px;
 }
 
 .selector__realce {
@@ -985,7 +1361,7 @@ body {
     width: calc(50% - 4px);
     height: calc(100% - 8px);
     background: var(--salvia-oscuro);
-    border-radius: 9px;
+    border-radius: 12px;
     transition: transform 200ms var(--ease-out);
     z-index: 0;
 }
@@ -1001,16 +1377,16 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-height: 44px;
+    min-height: 48px;
     border: none;
     background: transparent;
     font-family: "Manrope", sans-serif;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.95rem;
     padding: 12px 0;
     color: var(--tinta-suave);
     cursor: pointer;
-    border-radius: 9px;
+    border-radius: 12px;
     transition: color 150ms ease, transform 100ms var(--ease-out);
 }
 
@@ -1075,15 +1451,14 @@ body {
 
 .pieza {
     background: var(--superficie);
-    border: 1px solid var(--linea);
-    border-radius: 12px;
-    padding: 14px 12px 12px;
+    border-radius: 18px;
+    padding: 16px 12px 14px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+    gap: 10px;
+    box-shadow: var(--sombra-tarjeta);
 }
 
 /* Illustrated coin */
@@ -1186,16 +1561,16 @@ body {
 .pieza__input {
     width: 100%;
     max-width: 120px;
-    min-height: 44px;
-    border: 1px solid var(--linea);
-    border-radius: 8px;
-    padding: 7px 6px;
+    min-height: 48px;
+    border: 1.5px solid transparent;
+    border-radius: 12px;
+    padding: 8px 6px;
     text-align: center;
     font-family: "Manrope", sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 700;
     color: var(--texto-print);
-    background: var(--superficie-hundida);
+    background: var(--relleno-input);
     outline: none;
     -moz-appearance: textfield;
     appearance: textfield;
@@ -1207,9 +1582,10 @@ body {
     margin: 0;
 }
 
-.pieza__input:focus-visible {
+.pieza__input:focus {
+    background: var(--superficie);
     border-color: var(--salvia-oscuro);
-    box-shadow: 0 0 0 3px rgba(63, 78, 75, 0.2);
+    box-shadow: var(--anillo-foco);
 }
 
 .pieza__subtotal {
@@ -1219,16 +1595,28 @@ body {
 }
 
 .panel__subtotal {
-    text-align: right;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
     font-size: 0.9rem;
+    font-weight: 600;
     color: var(--tinta-suave);
-    margin: 16px 4px 0;
+    margin: 20px 4px 0;
 }
 
-/* Segunda línea: total de monedas + billetes, algo más destacada */
+/* Segunda línea: total de monedas + billetes, como tile destacado */
 .panel__subtotal--contador {
-    margin-top: 10px;
-    font-weight: 600;
+    margin: 10px 0 0;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: var(--salvia-claro);
+    font-weight: 700;
+    color: var(--salvia-oscuro);
+}
+
+.panel__subtotal--contador span {
+    font-size: 1.4rem;
+    font-weight: 800;
     color: var(--salvia-profundo);
 }
 
