@@ -1,35 +1,69 @@
 /* ---------- Tokens ---------- */
 :root {
-    --fondo: #F4F2EE;
-    --superficie: #FFFFFF;
-    --superficie-hundida: #ECE9E3;
-    --linea: #DEDAD1;
-    --tinta: #232220;
-    --tinta-suave: #6B6660;
-    --salvia: #788D8B;
+    /* ===== Paleta base ===== */
+    /* Federal (colores oficiales, no tocar) */
+    --federal-green: #788D8B;
+    --federal-orange: #CE871E;
+
+    /* Fondos */
+    --bg-main: #F8FAFC;
+    --bg-card: #FFFFFF;
+
+    /* Texto */
+    --text-primary: #1F2937;
+    --text-secondary: #64748B;
+
+    /* Bordes */
+    --border-color: #E2E8F0;
+
+    /* Estados (fondos suaves) */
+    --estado-exito: #E8F7EF;
+    --estado-error: #FEE2E2;
+    --estado-aviso: #FEF3C7;
+    --estado-info: #DBEAFE;
+
+    /* ===== Tokens que usa la app (salen de la paleta base) ===== */
+    --fondo: var(--bg-main);
+    --superficie: var(--bg-card);
+    --superficie-hundida: #F1F5F9;
+    --linea: var(--border-color);
+    --tinta: var(--text-primary);
+    --tinta-suave: var(--text-secondary);
+    /* text-secondary no llega a 4,5:1 sobre los fondos tintados (gris #F1F5F9,
+       verde, ámbar, azul: 3,9-4,3). Ahí se usa este gris más oscuro (6,2-6,9:1) */
+    --tinta-suave-fuerte: #475569;
+
+    /* Tonos derivados del verde Federal */
+    --salvia: var(--federal-green);
     --salvia-oscuro: #3F4E4B;
     --salvia-profundo: #2A3634;
     --salvia-claro: #E7EAE8;
-    --mostaza: #CE871E;
-    --exito: #1E7A4C;
-    --exito-fondo: #E7F3ED;
-    /* Rojo: SOLO para errores de datos (avisos) */
-    --alerta: #B3261E;
-    --alerta-fondo: #FBEAE8;
-    /* Ámbar (familia de la mostaza) para Sobran y Faltan: los dos son descuadre.
-       Texto oscuro para el contraste: 5,38:1 sobre su fondo, 5,92:1 sobre blanco. */
-    --descuadre: #8A5A0B;
-    --descuadre-fondo: #FDF3E1;
-    --texto-print: #232220;
+    /* El naranja: SOLO para botones (Descargar PDF) y el paso activo,
+       siempre con texto oscuro (blanco sobre naranja no llega: 2,95:1).
+       Así no se confunde con el ámbar de Sobran/Faltan. */
+    --mostaza: var(--federal-orange);
+    --mostaza-hover: #DA9B40; /* más claro: el texto oscuro gana contraste (6,11:1) */
 
-    --papel: #FFFFFF;
-    --papel-suave: #ECE9E3;
+    /* Estados del veredicto: texto oscuro sobre su fondo suave */
+    /* Caja cuadrada: verde (4,53:1 sobre su fondo, 5,02:1 sobre blanco) */
+    --exito: #15803D;
+    --exito-fondo: var(--estado-exito);
+    /* Rojo: SOLO para errores de datos (5,30:1 sobre su fondo) */
+    --alerta: #B91C1C;
+    --alerta-fondo: var(--estado-error);
+    /* Sobran y Faltan: ámbar, los dos son descuadre (5,32:1 sobre su fondo,
+       5,92:1 sobre blanco). Solo dentro de las tarjetas de resultado. */
+    --descuadre: #8A5A0B;
+    --descuadre-fondo: var(--estado-aviso);
+    /* Información (p. ej. "Falta el efectivo real"): azul suave, texto oscuro */
+    --info-fondo: var(--estado-info);
+    --texto-print: var(--text-primary);
 
     /* Relleno de los inputs dentro de las tarjetas blancas */
-    --relleno-input: #F4F2EE;
-    --radio-tarjeta: 20px;
-    --radio-control: 14px;
-    --sombra-tarjeta: 0 1px 2px rgba(42, 54, 52, 0.05), 0 8px 24px rgba(42, 54, 52, 0.06);
+    --relleno-input: #F1F5F9;
+    --radio-tarjeta: 16px;
+    --radio-control: 12px;
+    --sombra-tarjeta: 0 1px 2px rgba(31, 41, 55, 0.04), 0 4px 14px rgba(31, 41, 55, 0.05);
     --anillo-foco: 0 0 0 4px rgba(63, 78, 75, 0.16);
 
     --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -124,32 +158,61 @@ body {
     color: var(--salvia-profundo);
 }
 
+/* Cada paso: círculo arriba y nombre debajo. Los círculos se unen con una
+   línea fina que sale de cada paso hacia el anterior (::before). */
 .pasos__paso {
+    position: relative;
     flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    min-height: 44px;
-    padding: 8px;
-    border-radius: 12px;
+    gap: 4px;
+    min-height: 52px;
+    padding: 4px 2px;
+    border-radius: 10px;
     text-decoration: none;
     color: var(--tinta-suave);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    transition: color 200ms var(--ease-out), background 200ms var(--ease-out);
+    transition: color 200ms var(--ease-out);
 }
 
+/* Línea de unión: del centro del círculo anterior al de este.
+   Va por detrás de los círculos (z-index) para que solo se vea entre ellos. */
+.pasos__paso + .pasos__paso::before {
+    content: "";
+    position: absolute;
+    top: 18px; /* mitad del círculo (28px) + padding superior (4px) */
+    right: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--linea);
+    z-index: 0;
+    transition: background 200ms var(--ease-out);
+}
+
+/* El tramo que llega a un paso completado o activo se pinta de salvia */
+.pasos__paso.is-completado::before,
+.pasos__paso.is-activo::before {
+    background: var(--salvia);
+}
+
+/* Pendiente: círculo gris claro */
 .pasos__numero {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    border: 1.5px solid currentColor;
-    font-size: 0.72rem;
-    font-weight: 700;
+    border: 1.5px solid var(--linea);
+    background: var(--relleno-input);
+    color: var(--tinta-suave-fuerte);
+    font-size: 0.78rem;
+    font-weight: 800;
     flex-shrink: 0;
     transition: background 200ms var(--ease-out), border-color 200ms var(--ease-out), color 200ms var(--ease-out);
 }
@@ -158,26 +221,48 @@ body {
     white-space: nowrap;
 }
 
+/* Completado: círculo salvia con ✓ (el número se oculta con font-size 0
+   y el ✓ lo pone ::after; el nombre del paso sigue en el aria-label) */
+.pasos__paso.is-completado .pasos__numero {
+    background: var(--salvia);
+    border-color: var(--salvia);
+    color: #FFFFFF;
+    font-size: 0;
+}
+
+.pasos__paso.is-completado .pasos__numero::after {
+    content: "✓";
+    content: "✓" / "";
+    font-size: 0.85rem;
+}
+
 .pasos__paso.is-completado {
     color: var(--salvia-oscuro);
 }
 
-.pasos__paso.is-completado .pasos__numero {
-    background: var(--salvia-oscuro);
-    border-color: var(--salvia-oscuro);
-    color: #FFFFFF;
-}
-
-/* El paso activo es una píldora salvia clara, como un segmento seleccionado */
+/* Activo: naranja con el número en oscuro (4,97:1). Manda sobre "completado":
+   el paso en el que estás muestra su número, no el ✓. */
 .pasos__paso.is-activo {
-    color: var(--salvia-profundo);
-    background: var(--salvia-claro);
+    color: var(--tinta);
+    font-weight: 800;
 }
 
 .pasos__paso.is-activo .pasos__numero {
-    background: var(--salvia-oscuro);
-    border-color: var(--salvia-oscuro);
-    color: #FFFFFF;
+    background: var(--mostaza);
+    border-color: var(--mostaza);
+    color: var(--tinta);
+    font-size: 0.78rem;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--mostaza) 22%, transparent);
+}
+
+.pasos__paso.is-activo .pasos__numero::after {
+    content: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .pasos__paso:hover {
+        color: var(--tinta);
+    }
 }
 
 #pasoEfectivo,
@@ -193,24 +278,14 @@ body {
     }
 }
 
-@media (max-width: 520px) {
+/* En móvil los cuatro nombres siguen visibles, solo algo más pequeños */
+@media (max-width: 400px) {
+    .pasos {
+        padding: 6px 4px;
+    }
+
     .pasos__paso {
-        gap: 0;
-        padding: 8px 4px;
-    }
-
-    .pasos__etiqueta {
-        display: none;
-    }
-
-    /* En móvil solo cabe un nombre: el del paso activo, que ocupa más ancho */
-    .pasos__paso.is-activo {
-        flex-grow: 2;
-        gap: 6px;
-    }
-
-    .pasos__paso.is-activo .pasos__etiqueta {
-        display: inline;
+        font-size: 0.72rem;
     }
 }
 
@@ -237,9 +312,9 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     background: var(--salvia-oscuro);
     color: #FFFFFF;
     font-size: 0.95rem;
@@ -294,7 +369,7 @@ body {
     font-size: 0.88rem;
     font-weight: 600;
     line-height: 1.4;
-    color: var(--tinta-suave);
+    color: var(--tinta-suave-fuerte);
 }
 
 .estado-cierre[data-estado="completo"] {
@@ -306,7 +381,7 @@ body {
 /* Subtítulo bajo el nombre del paso, alineado con el texto (no con la insignia) */
 .seccion__titulo-nota {
     flex-basis: 100%;
-    padding-left: 44px;
+    padding-left: 42px;
     margin-top: 2px;
     font-family: "Manrope", sans-serif;
     font-size: 0.8rem;
@@ -323,15 +398,35 @@ body {
     margin-bottom: 16px;
     padding: 20px;
     background: var(--superficie);
+    border: 1px solid var(--linea);
     border-radius: var(--radio-tarjeta);
     box-shadow: var(--sombra-tarjeta);
 }
 
+/* Orden visual de cada campo (solo CSS, el HTML no cambia):
+   etiqueta → input → ayuda en gris → aviso. */
 .campo {
     display: flex;
     flex-direction: column;
     gap: 6px;
     flex: 1;
+}
+
+.campo > label {
+    order: 0;
+}
+
+.campo > .campo__moneda,
+.campo > .campo__input {
+    order: 1;
+}
+
+.campo > .campo__ayuda {
+    order: 2;
+}
+
+.campo > .aviso {
+    order: 3;
 }
 
 .campo label {
@@ -341,7 +436,7 @@ body {
 }
 
 .campo__ayuda {
-    margin: -2px 0 0;
+    margin: 0;
     font-size: 0.75rem;
     font-weight: 400;
     color: var(--tinta-suave);
@@ -357,15 +452,11 @@ body {
     gap: 12px;
 }
 
-.campo-par .campo__moneda {
-    margin-top: auto;
-}
-
-/* Input relleno sin borde visible; al enfocarlo se vuelve blanco con anillo salvia */
+/* Input relleno con borde suave; al enfocarlo se vuelve blanco con anillo salvia */
 .campo__input {
     width: 100%;
-    min-height: 54px;
-    border: 1.5px solid transparent;
+    min-height: 52px;
+    border: 1.5px solid var(--linea);
     border-radius: var(--radio-control);
     padding: 14px 16px;
     font-family: "Manrope", sans-serif;
@@ -378,7 +469,7 @@ body {
 }
 
 .campo__input::placeholder {
-    color: #736E67; /* 4,52:1 sobre el relleno del input */
+    color: #5B6B80; /* 4,97:1 sobre el relleno del input */
     font-weight: 600;
 }
 
@@ -388,28 +479,40 @@ body {
     box-shadow: var(--anillo-foco);
 }
 
-/* Campo vacío que impide ver el resultado: borde mostaza suave (nunca rojo,
-   el rojo es para errores). Al enfocarlo manda el estilo de foco normal. */
+/* Campo vacío que impide ver el resultado: borde salvia discontinuo
+   (ni rojo, que es para errores, ni ámbar, que es para el resultado).
+   Al enfocarlo manda el estilo de foco normal. */
 .campo__input.is-bloqueante:not(:focus) {
-    border-color: #B07416; /* mostaza más oscura: 3,51:1, visible como borde */
+    border-color: var(--salvia); /* 3,2:1 sobre el relleno: visible como borde */
     border-style: dashed;
 }
 
 .campo__moneda {
     position: relative;
     display: flex;
-    align-items: center;
+    align-items: stretch;
 }
 
 .campo__moneda .campo__input {
-    padding-right: 38px;
+    padding-right: 60px;
 }
 
+/* El "€" en una caja pegada al borde derecho del input (por dentro del borde,
+   así el borde de foco rodea input y caja a la vez) */
 .campo__sufijo {
     position: absolute;
-    right: 16px;
+    top: 1.5px;
+    right: 1.5px;
+    bottom: 1.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    border-left: 1px solid var(--linea);
+    border-radius: 0 calc(var(--radio-control) - 1.5px) calc(var(--radio-control) - 1.5px) 0;
+    background: var(--linea);
     font-weight: 700;
-    color: var(--tinta-suave);
+    color: var(--tinta-suave-fuerte); /* 6,15:1 sobre la caja */
     pointer-events: none;
 }
 
@@ -469,10 +572,10 @@ body {
     display: none;
 }
 
-/* Falta un dato (no es un error): nota neutra en salvia, nunca roja */
+/* Falta un dato (no es un error): nota informativa azul suave, nunca roja */
 .aviso--info {
-    background: var(--salvia-claro);
-    color: var(--salvia-profundo);
+    background: var(--info-fondo);
+    color: var(--tinta); /* 12:1 sobre el azul suave */
 }
 
 .resultado-parcial__cifra .cifra__moneda {
@@ -490,12 +593,13 @@ body {
 
 /* ---------- Resultado final (el dato que importa) ---------- */
 /* Tarjeta protagonista: cifra muy grande, color según el veredicto */
+/* Sin data-estado (cierre incompleto): neutro, gris claro, sin rojo */
 .resultado-final {
     border-radius: var(--radio-tarjeta);
     padding: 24px 20px;
     text-align: center;
-    border: 1.5px solid transparent;
-    background: var(--superficie);
+    border: 1px solid var(--linea);
+    background: var(--relleno-input);
     box-shadow: var(--sombra-tarjeta);
     margin-bottom: 16px;
     transition: background 240ms var(--ease-out), border-color 240ms var(--ease-out);
@@ -507,16 +611,17 @@ body {
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--tinta-suave);
+    color: var(--tinta-suave-fuerte);
     margin: 0 0 6px;
 }
 
+/* El veredicto, grande */
 .resultado-final__estado {
     font-family: "Manrope", sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
+    font-weight: 800;
+    font-size: 1.3rem;
     color: var(--tinta);
-    margin: 0 0 2px;
+    margin: 0 0 4px;
 }
 
 .resultado-final__cifra {
@@ -531,17 +636,37 @@ body {
 }
 
 /* Frase que explica el veredicto (gris, como el resto de ayudas) */
+/* Textos grises sobre fondos tintados: el gris fuerte (más de 6:1) */
 .resultado-final__significado {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--tinta-suave);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--tinta-suave-fuerte);
     margin: 8px 0 0;
 }
 
 .resultado-final__sub {
-    font-size: 0.76rem;
-    color: var(--tinta-suave);
+    font-size: 0.78rem;
+    color: var(--tinta-suave-fuerte);
     margin: 8px 0 0;
+}
+
+/* Incompleto: icono "i" delante de "Falta: …" (informativo, no error) */
+.resultado-final:not([data-estado]) .resultado-final__sub::before {
+    content: "i";
+    content: "i" / "";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.35em;
+    height: 1.35em;
+    margin-right: 0.4em;
+    border-radius: 50%;
+    background: var(--tinta-suave-fuerte);
+    color: #FFFFFF;
+    font-size: 0.85em;
+    font-weight: 800;
+    font-style: normal;
+    vertical-align: 0.05em;
 }
 
 /* Enlaces de "Falta: …": llevan al campo que hay que rellenar */
@@ -571,7 +696,7 @@ body {
    El rojo queda solo para los avisos de error de datos. */
 .resultado-final[data-estado="cuadrada"] {
     background: var(--exito-fondo);
-    border-color: color-mix(in srgb, var(--exito) 35%, transparent);
+    border-color: color-mix(in srgb, var(--exito) 30%, transparent);
 }
 
 .resultado-final[data-estado="cuadrada"] .resultado-final__estado,
@@ -582,7 +707,7 @@ body {
 .resultado-final[data-estado="sobra"],
 .resultado-final[data-estado="falta"] {
     background: var(--descuadre-fondo);
-    border-color: color-mix(in srgb, var(--descuadre) 35%, transparent);
+    border-color: color-mix(in srgb, var(--descuadre) 30%, transparent);
 }
 
 .resultado-final[data-estado="sobra"] .resultado-final__estado,
@@ -650,7 +775,7 @@ body {
     justify-content: space-between;
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--tinta-suave);
+    color: var(--tinta-suave-fuerte);
 }
 
 .fondo-resumen__linea[hidden] {
@@ -710,7 +835,7 @@ body {
     align-items: baseline;
     justify-content: space-between;
     padding: 0 2px 12px;
-    border-bottom: 2px solid var(--mostaza);
+    border-bottom: 2px solid var(--salvia);
 }
 
 .resumen__empresa {
@@ -726,12 +851,17 @@ body {
 /* El logo original, sin modificar: solo se ajusta su alto */
 .resumen__logo {
     display: block;
-    height: 30px;
+    height: 40px;
     width: auto;
 }
 
 /* Elementos que solo salen en el PDF (p. ej. el título "Cierre de caja") */
 .solo-impresion {
+    display: none;
+}
+
+/* .resumen__fila pone display: flex más abajo: aquí hace falta más especificidad */
+.resumen__fila.solo-impresion {
     display: none;
 }
 
@@ -762,6 +892,7 @@ body {
 
 .resumen__tarjeta {
     background: var(--superficie);
+    border: 1px solid var(--linea);
     border-radius: var(--radio-tarjeta);
     box-shadow: var(--sombra-tarjeta);
     overflow: hidden;
@@ -805,10 +936,6 @@ body {
 /* Cifras clave del paso 4: más aire y la diferencia algo más grande */
 .resumen__tarjeta--claves .resumen__fila {
     padding: 14px 0;
-}
-
-.resumen__tarjeta--claves .js-diferencia dd {
-    font-size: 1.35rem;
 }
 
 .resumen__fila dt {
@@ -862,11 +989,18 @@ body {
     padding: 10px 14px;
     border: 1.5px solid var(--linea);
     border-radius: var(--radio-control);
-    background: transparent;
-    color: var(--salvia-oscuro);
+    background: var(--superficie);
+    color: var(--tinta);
     font-size: 0.92rem;
     font-weight: 700;
     cursor: pointer;
+    transition: border-color 160ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .resumen__desglose-boton:hover {
+        border-color: var(--tinta-suave);
+    }
 }
 
 .resumen__desglose-boton::-webkit-details-marker {
@@ -898,9 +1032,8 @@ body {
 }
 
 .resumen__desglose-boton:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(63, 78, 75, 0.2);
-    border-color: var(--salvia-oscuro);
+    outline: 2px solid var(--salvia-oscuro);
+    outline-offset: 2px;
 }
 
 .resumen__desglose-contenido {
@@ -918,27 +1051,29 @@ body {
     margin-top: 14px;
 }
 
-/* Botón secundario (Nuevo cierre): mismo tamaño que el de descarga, sin relleno */
+/* Botón secundario (Nuevo cierre): solo borde y texto oscuro.
+   El borde gris medio (4,76:1) se distingue bien sobre el fondo. */
 .boton-secundario {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 52px;
     padding: 12px 20px;
-    border: 1.5px solid var(--linea);
+    border: 1.5px solid var(--tinta-suave);
     border-radius: var(--radio-control);
-    background: var(--superficie);
-    color: var(--salvia-oscuro);
+    background: transparent;
+    color: var(--tinta);
     font-family: "Manrope", sans-serif;
     font-weight: 700;
     font-size: 0.95rem;
     cursor: pointer;
-    transition: border-color 160ms var(--ease-out), transform 100ms var(--ease-out);
+    transition: border-color 160ms var(--ease-out), background 160ms var(--ease-out), transform 100ms var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
     .boton-secundario:hover {
-        border-color: var(--salvia-oscuro);
+        border-color: var(--tinta);
+        background: var(--superficie);
     }
 }
 
@@ -972,21 +1107,22 @@ body {
     gap: 8px;
     min-height: 52px;
     border: none;
-    background: var(--salvia-oscuro);
-    color: #FFFFFF;
+    /* Naranja Federal con texto oscuro (4,97:1; blanco no llegaría) */
+    background: var(--mostaza);
+    color: var(--tinta);
     font-family: "Manrope", sans-serif;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.95rem;
     padding: 12px 20px;
     border-radius: var(--radio-control);
-    box-shadow: 0 6px 16px rgba(42, 54, 52, 0.18);
+    box-shadow: 0 6px 16px rgba(206, 135, 30, 0.25);
     cursor: pointer;
     transition: background 160ms var(--ease-out), transform 100ms var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
     .boton-descarga:hover {
-        background: var(--salvia-profundo);
+        background: var(--mostaza-hover);
     }
 }
 
@@ -1010,7 +1146,7 @@ body {
     .cabecera,
     .barra-superior,
     .main__intro,
-    .main > .seccion__titulo,
+    #pasoEfectivo,
     #selector,
     #panelMonedas,
     #panelBilletes,
@@ -1026,6 +1162,15 @@ body {
 
     .solo-impresion {
         display: block;
+    }
+
+    /* La fila "Diferencia" del resultado solo se imprime; es una fila flex */
+    .resumen__fila.solo-impresion {
+        display: flex;
+    }
+
+    .resumen__tarjeta--claves .js-diferencia dd {
+        font-size: 16pt;
     }
 
     body,
@@ -1051,10 +1196,12 @@ body {
         display: block;
         margin: 0;
         padding: 8px 12px;
-        border: 1.5px solid var(--descuadre);
+        /* Neutro (gris): falta información, no es un descuadre ni un error.
+           El ámbar queda solo para Sobran/Faltan dentro del resultado. */
+        border: 1.5px solid var(--tinta-suave-fuerte);
         border-radius: 8px;
-        background: var(--descuadre-fondo);
-        color: var(--descuadre);
+        background: var(--relleno-input);
+        color: var(--tinta);
         font-weight: 700;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
@@ -1078,7 +1225,7 @@ body {
     .resumen__cabecera {
         align-items: flex-end;
         padding: 0 0 8px;
-        border-bottom: 2px solid var(--mostaza);
+        border-bottom: 2px solid var(--salvia);
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
@@ -1099,7 +1246,7 @@ body {
     }
 
     .resumen__tarjeta {
-        border: 1px solid #BDB8AF;
+        border: 1px solid #CBD5E1;
         border-radius: 8px;
         box-shadow: none;
         break-inside: avoid;
@@ -1108,7 +1255,7 @@ body {
     .resumen__tarjeta-titulo {
         padding: 5px 12px;
         font-size: 8pt;
-        border-bottom: 1px solid #BDB8AF;
+        border-bottom: 1px solid #CBD5E1;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
@@ -1133,10 +1280,6 @@ body {
 
     .resumen__tarjeta--claves .resumen__fila {
         padding: 6px 0;
-    }
-
-    .resumen__tarjeta--claves .js-diferencia dd {
-        font-size: 16pt;
     }
 
     /* Que el PDF conserve los colores e iconos del veredicto */
@@ -1297,7 +1440,7 @@ body {
     letter-spacing: 0.04em;
     text-transform: uppercase;
     background: var(--superficie-hundida);
-    color: var(--tinta-suave);
+    color: var(--tinta-suave-fuerte);
 }
 
 .cabecera__estado[data-estado="completo"] {
@@ -1394,6 +1537,20 @@ body {
     color: #FFFFFF;
 }
 
+/* "Monedas" / "Billetes" con su subtotal debajo */
+.selector__opcion {
+    flex-wrap: wrap;
+    row-gap: 0;
+    padding: 8px 4px;
+}
+
+.selector__total {
+    flex-basis: 100%;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
 .selector__opcion:active {
     transform: scale(0.97);
 }
@@ -1423,19 +1580,23 @@ body {
     display: none;
 }
 
+/* ---------- Contador en filas compactas ----------
+   El panel es una tarjeta blanca con una fila por moneda o billete:
+   ilustración + denominación | cantidad | subtotal (a la derecha).
+   Los títulos de grupo ("Euros", "Céntimos"...) separan los bloques. */
 .rejilla {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.rejilla--billetes {
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
+    padding: 4px 16px;
+    background: var(--superficie);
+    border: 1px solid var(--linea);
+    border-radius: var(--radio-tarjeta);
+    box-shadow: var(--sombra-tarjeta);
 }
 
 .rejilla__grupo {
-    grid-column: 1 / -1;
     margin: 0;
+    padding: 12px 0 4px;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -1444,27 +1605,115 @@ body {
 }
 
 .rejilla__grupo:not(:first-child) {
-    margin-top: 8px;
-    padding-top: 14px;
-    border-top: 1px dashed var(--linea);
+    margin-top: 4px;
+    border-top: 1px solid var(--linea);
 }
 
+/* Una fila, en rejilla para que todas queden alineadas:
+       ilustración | − cantidad + | subtotal
+   (Sin texto de denominación: la ilustración ya muestra el valor y los
+   títulos de grupo distinguen euros de céntimos. Para lectores de pantalla
+   sigue el texto oculto "Moneda de 2 euros" y el aria-label del input.) */
 .pieza {
-    background: var(--superficie);
-    border-radius: 18px;
-    padding: 16px 12px 14px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 56px auto minmax(0, 1fr);
+    grid-template-areas: "ilustracion cantidad subtotal";
     align-items: center;
-    gap: 10px;
-    box-shadow: var(--sombra-tarjeta);
+    column-gap: 10px;
+    row-gap: 4px;
+    min-height: 60px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--linea);
+}
+
+.pieza > .moneda,
+.pieza > .billete {
+    grid-area: ilustracion;
+    justify-self: center;
+}
+
+.pieza__cantidad { grid-area: cantidad; }
+.pieza__subtotal { grid-area: subtotal; }
+
+/* Sin línea en la última fila de cada grupo (la separación la da el título) */
+.pieza:last-child,
+.pieza:has(+ .rejilla__grupo) {
+    border-bottom: none;
+}
+
+/* Billetes: la ilustración es más ancha (84 px) y los importes también
+   ("12.000,00 €"), así que el subtotal va debajo de − cantidad +, alineado
+   a la derecha, con todo el ancho de la columna:
+       billete |   − cantidad +
+       billete |       subtotal */
+.rejilla--billetes .pieza {
+    grid-template-columns: 84px minmax(0, 1fr);
+    grid-template-areas:
+        "ilustracion cantidad"
+        "ilustracion subtotal";
+    column-gap: 10px;
+    row-gap: 4px;
+}
+
+.rejilla--billetes .pieza__cantidad {
+    justify-self: end;
+}
+
+.rejilla--billetes .pieza__subtotal {
+    align-self: start;
+}
+
+/* − cantidad +: un solo bloque con borde, como un control segmentado.
+   Botones de 44 × 44 px (objetivo táctil mínimo). */
+.pieza__cantidad {
+    display: flex;
+    align-items: stretch;
+    border: 1.5px solid var(--linea);
+    border-radius: 12px;
+    background: var(--relleno-input);
+    overflow: hidden;
+}
+
+.pieza__cantidad:focus-within {
+    border-color: var(--salvia-oscuro);
+    box-shadow: var(--anillo-foco);
+}
+
+.pieza__boton {
+    width: 44px;
+    min-height: 44px;
+    border: none;
+    background: transparent;
+    color: var(--tinta);
+    font-family: "Manrope", sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    touch-action: manipulation; /* sin zoom por doble toque al pulsar rápido */
+    transition: background 120ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .pieza__boton:hover {
+        background: var(--linea);
+    }
+}
+
+.pieza__boton:active {
+    background: #CBD5E1;
+}
+
+/* Dentro del bloque, el contorno de foco va hacia dentro para no cortarse */
+.pieza__boton:focus-visible {
+    outline: 2px solid var(--salvia-oscuro);
+    outline-offset: -3px;
 }
 
 /* Illustrated coin */
 .moneda {
-    width: 62px;
-    height: 62px;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
 }
 
@@ -1477,37 +1726,47 @@ body {
     opacity: 0.75;
 }
 
+/* Número de la moneda: tono muy oscuro del propio metal y trazo grueso.
+   Contraste sobre el tono medio de la cara: cobre 4,7:1, oro 6,1:1,
+   plata 9:1 (antes, tono sobre tono: 1,4-1,7:1). */
 .moneda__numero {
     font-family: "Manrope", sans-serif;
-    font-weight: 700;
-    font-size: 30px;
-    fill: var(--oscuro);
+    font-weight: 800;
+    font-size: 32px;
+    fill: var(--numero);
 }
 
+/* Brillo claro desplazado: da relieve sin restar contraste */
 .moneda__numero-sombra {
     font-family: "Manrope", sans-serif;
-    font-weight: 700;
-    font-size: 30px;
-    fill: var(--borde);
-    opacity: 0.45;
+    font-weight: 800;
+    font-size: 32px;
+    fill: #FFFFFF;
+    opacity: 0.4;
 }
 
-.moneda--1e .moneda__numero, .moneda--2e .moneda__numero { fill: var(--oscuro2); font-size: 24px; }
-.moneda--1e .moneda__numero-sombra, .moneda--2e .moneda__numero-sombra { fill: var(--borde2); opacity: 0.45; font-size: 24px; }
+.moneda--1e .moneda__numero, .moneda--2e .moneda__numero { font-size: 30px; }
+.moneda--1e .moneda__numero-sombra, .moneda--2e .moneda__numero-sombra { font-size: 30px; }
 
+/* --numero: color del número, el tono más oscuro del metal donde va escrito
+   (en 1 € y 2 € el número va en el centro, que es del otro metal) */
 .moneda--1c, .moneda--2c, .moneda--5c {
     --claro: #E8B98A; --oscuro: #A85C2C; --borde: #7A431E;
+    --numero: #3D1C08;
 }
 .moneda--10c, .moneda--20c, .moneda--50c {
     --claro: #F3DE9A; --oscuro: #C9A227; --borde: #9C7A1E;
+    --numero: #4D3A05;
 }
 .moneda--1e {
     --claro: #F3DE9A; --oscuro: #C9A227; --borde: #9C7A1E;
     --claro2: #F2F2F2; --oscuro2: #ABABAB; --borde2: #8C8C8C;
+    --numero: #2B2B2B; /* centro de plata */
 }
 .moneda--2e {
     --claro: #F2F2F2; --oscuro: #ABABAB; --borde: #8C8C8C;
     --claro2: #F3DE9A; --oscuro2: #C9A227; --borde2: #9C7A1E;
+    --numero: #4D3A05; /* centro dorado */
 }
 
 /* Visually-hidden utility (accessible label for decorative bill art) */
@@ -1525,7 +1784,8 @@ body {
 
 /* Illustrated banknote */
 .billete {
-    width: 112px;
+    display: block;
+    width: 84px;
     height: auto;
     flex-shrink: 0;
     --crema: #F7EFD9;
@@ -1558,13 +1818,15 @@ body {
 .billete--10  { --accento: #C2185B; --accento-claro: #F1B8C4; --accento-oscuro: #8E1245; --mancha: #F1B8C4; }
 .billete--5   { --accento: #8C8C8C; --accento-claro: #DADADA; --accento-oscuro: #5C5C5C; --mancha: #DADADA; }
 
+/* El campo de cantidad, entre los dos botones */
 .pieza__input {
-    width: 100%;
-    max-width: 120px;
-    min-height: 48px;
-    border: 1.5px solid transparent;
-    border-radius: 12px;
-    padding: 8px 6px;
+    width: 48px;
+    min-height: 44px;
+    border: none;
+    border-left: 1px solid var(--linea);
+    border-right: 1px solid var(--linea);
+    border-radius: 0;
+    padding: 4px 2px;
     text-align: center;
     font-family: "Manrope", sans-serif;
     font-size: 1.1rem;
@@ -1582,42 +1844,76 @@ body {
     margin: 0;
 }
 
+/* El anillo de foco lo pone el bloque (.pieza__cantidad:focus-within) */
 .pieza__input:focus {
     background: var(--superficie);
-    border-color: var(--salvia-oscuro);
-    box-shadow: var(--anillo-foco);
 }
 
+/* Subtotal de la fila, alineado a la derecha */
 .pieza__subtotal {
-    font-size: 0.78rem;
-    color: var(--tinta-suave);
     margin: 0;
+    text-align: right;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--tinta);
+    white-space: nowrap;
 }
 
+/* Total del panel ("Total de monedas" / "Total de billetes"): barra suave */
 .panel__subtotal {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--tinta-suave);
-    margin: 20px 4px 0;
+    margin: 12px 0 0;
+    padding: 14px 16px;
+    border-radius: var(--radio-control);
+    background: var(--relleno-input);
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--tinta-suave-fuerte);
 }
 
-/* Segunda línea: total de monedas + billetes, como tile destacado */
+.panel__subtotal span {
+    color: var(--tinta);
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+/* "Total del contador": barra grande salvia oscuro con texto blanco (8,74:1).
+   Va en el flujo de la página, no fijada. */
 .panel__subtotal--contador {
-    margin: 10px 0 0;
-    padding: 16px 18px;
-    border-radius: 16px;
-    background: var(--salvia-claro);
-    font-weight: 700;
-    color: var(--salvia-oscuro);
+    margin-top: 8px;
+    padding: 12px 16px;
+    background: var(--salvia-oscuro);
+    color: #FFFFFF;
+    font-size: 0.95rem;
 }
 
 .panel__subtotal--contador span {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: var(--salvia-profundo);
+    color: #FFFFFF;
+    font-size: 1.2rem;
+}
+
+/* Móvil: la tarjeta pierde algo de margen interior para que quepa el subtotal */
+@media (max-width: 400px) {
+    .rejilla {
+        padding: 4px 12px;
+    }
+}
+
+/* Pantallas muy estrechas: billete y campo algo más pequeños */
+@media (max-width: 360px) {
+    .rejilla--billetes .pieza {
+        grid-template-columns: 72px minmax(0, 1fr);
+    }
+
+    .billete {
+        width: 72px;
+    }
+
+    .pieza__input {
+        width: 40px;
+    }
 }
 
 /* ---------- Destello de una cifra que acaba de cambiar ---------- */
@@ -1634,10 +1930,10 @@ body {
     margin-left: 4px;
 }
 
-/* Color del destello: mostaza suave (el acento de la marca), que se
-   distingue bien sobre el blanco de las tarjetas */
+/* Color del destello: salvia suave (el naranja queda solo para botones
+   y paso activo, para no confundirlo con el ámbar del resultado) */
 :root {
-    --destello: color-mix(in srgb, var(--mostaza) 24%, transparent);
+    --destello: color-mix(in srgb, var(--salvia) 30%, transparent);
 }
 
 /* Dura 900 ms: se mantiene marcado un instante (hasta el 35 %) y luego
@@ -1681,18 +1977,71 @@ body {
     }
 }
 
+/* Sobre la barra oscuro del "Total del contador" el destello normal dejaría
+   texto oscuro sobre fondo oscuro: aquí el texto sigue blanco y el brillo es claro */
+.panel__subtotal--contador .is-resaltado {
+    animation-name: resaltar-cifra-oscuro;
+}
+
+@keyframes resaltar-cifra-oscuro {
+    0% {
+        background-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+    }
+    35% {
+        background-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+        transform: scale(1);
+    }
+    100% {
+        background-color: transparent;
+        box-shadow: 0 0 0 4px transparent;
+        transform: scale(1);
+    }
+}
+
+@keyframes resaltar-cifra-oscuro-sin-movimiento {
+    0%,
+    35% {
+        background-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+    }
+    100% {
+        background-color: transparent;
+        box-shadow: 0 0 0 4px transparent;
+    }
+}
+
 /* ---------- Motion & accessibility ---------- */
 @media (prefers-reduced-motion: reduce) {
     .selector__realce,
     .selector__opcion,
     .boton-descarga,
     .boton-secundario,
-    .resumen__desglose-boton::after {
+    .resumen__desglose-boton,
+    .resumen__desglose-boton::after,
+    .pasos__paso,
+    .pasos__paso::before,
+    .pasos__numero,
+    .campo__input,
+    .resultado-final,
+    .pieza__boton {
         transition: none;
+    }
+
+    .boton-descarga:active,
+    .boton-secundario:active,
+    .selector__opcion:active {
+        transform: none;
     }
 
     .is-resaltado {
         animation-name: resaltar-cifra-sin-movimiento;
+    }
+
+    .panel__subtotal--contador .is-resaltado {
+        animation-name: resaltar-cifra-oscuro-sin-movimiento;
     }
 
     .cabecera__etiqueta,
@@ -1762,3 +2111,692 @@ body {
         font-size: 0.86rem;
     }
 }
+/* ---------- Tamaños mínimos de texto y contraste (solo pantalla) ----------
+   Va en @media screen para no cambiar nada del PDF.
+   Mínimo 12 px en etiquetas y 13 px en ayudas; los grises sobre fondos
+   grises o tintados usan el gris fuerte (#475569) para pasar de 4,5:1. */
+@media screen {
+    /* Barra de pasos: nombres a 13 px (12,5 px en móvil estrecho) */
+    .pasos__paso {
+        font-size: 0.8125rem;
+    }
+
+    /* Etiquetas de la pastilla de la cabecera: 12 px.
+       "Fecha de cierre" pasaba de 3,99:1 a 6,26:1 con el gris fuerte. */
+    .cabecera__fecha-etiqueta {
+        font-size: 0.75rem;
+        color: var(--tinta-suave-fuerte);
+    }
+
+    .cabecera__estado {
+        font-size: 0.75rem;
+    }
+
+    /* Ayudas: 13 px */
+    .campo__ayuda,
+    .resultado-parcial__ayuda,
+    .resultado-final__sub,
+    .resumen__nota-pdf {
+        font-size: 0.8125rem;
+    }
+
+    /* Ayuda dentro de la caja gris del fondo: #64748B daba 4,34:1 → 6,92:1 */
+    .fondo-resumen .campo__ayuda {
+        color: var(--tinta-suave-fuerte);
+    }
+
+    /* Títulos pequeños en mayúsculas: 12 px */
+    .resultado-final__eyebrow,
+    .rejilla__grupo {
+        font-size: 0.75rem;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .cabecera__fecha-etiqueta {
+        font-size: 0.75rem;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .pasos__paso {
+        font-size: 0.78rem;
+    }
+}
+
+/* ---------- Móvil: cabecera compacta (≈100 px en vez de 147 px) ----------
+   Se conservan el logo, la etiqueta, la pastilla de fecha y la de estado;
+   solo se reducen márgenes y el tamaño del logo. */
+@media screen and (max-width: 600px) {
+    .cabecera {
+        padding: 12px 16px 14px;
+        border-radius: 0 0 18px 18px;
+    }
+
+    .cabecera__texto {
+        margin-top: 0;
+        padding-right: 120px; /* sitio para la pastilla de la derecha */
+    }
+
+    .cabecera__etiqueta {
+        margin: 0 0 4px;
+    }
+
+    .cabecera__titulo {
+        margin: 0;
+    }
+
+    .cabecera__logo-img {
+        width: 88px;
+    }
+
+    /* La pastilla ocupa el alto del bloque interior de la cabecera (su
+       referencia de posición, ~72 px) y centra su contenido. Con top/bottom
+       de 12-14 px solo le quedaban 48 px y la fecha y el estado (54 px) se
+       salían del recuadro.
+       (No se centra con transform: la animación de entrada ya usa transform.) */
+    .cabecera__fecha {
+        top: 0;
+        bottom: 0;
+        right: 0;
+        justify-content: center;
+        gap: 3px;
+        padding: 6px 10px;
+    }
+
+    /* El círculo naranja decorativo, proporcionado a la cabecera más baja */
+    .cabecera::after {
+        width: 180px;
+        height: 180px;
+        right: -60px;
+        bottom: -110px;
+    }
+}
+
+/* ---------- Tablet (700-1023 px): cada panel en 2 columnas ----------
+   Con una sola columna, cada fila medía ~566 px y el subtotal quedaba lejos
+   de los botones. En 2 columnas cada pieza es una ficha compacta:
+       moneda/billete |   − cantidad +
+       moneda/billete |       subtotal
+   (las pestañas Monedas / Billetes siguen igual). */
+@media screen and (min-width: 700px) and (max-width: 1023px) {
+    .rejilla {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px 12px;
+        padding: 12px 16px 16px;
+    }
+
+    .rejilla__grupo {
+        grid-column: 1 / -1;
+        padding: 4px 0 0;
+    }
+
+    .rejilla__grupo:not(:first-child) {
+        margin-top: 6px;
+        padding-top: 14px;
+    }
+
+    /* Cada pieza, una ficha gris suave en lugar de una fila con línea */
+    .pieza,
+    .rejilla--billetes .pieza {
+        grid-template-columns: 56px minmax(0, 1fr);
+        grid-template-areas:
+            "ilustracion cantidad"
+            "ilustracion subtotal";
+        column-gap: 12px;
+        row-gap: 4px;
+        padding: 10px 12px;
+        border: none;
+        border-radius: var(--radio-control);
+        background: var(--fondo);
+    }
+
+    .rejilla--billetes .pieza {
+        grid-template-columns: 84px minmax(0, 1fr);
+    }
+
+    .pieza__cantidad {
+        justify-self: end;
+    }
+
+    .pieza__subtotal {
+        align-self: start;
+    }
+}
+
+/* ---------- Escritorio (≥1024 px): conteo arriba, tres tarjetas debajo ----------
+   Solo CSS y solo en pantalla (@media screen): el PDF no cambia.
+       ┌──────────── 1 Contar efectivo ─────────────┐
+       │ Monedas     55,55 € │ Billetes   100,00 €  │
+       │ [ficha][ficha][ficha]│ [ficha][ficha][ficha]│
+       │ Total del contador (todo el ancho)          │
+       └─────────────────────────────────────────────┘
+       [ 2 Fondo ]   [ 3 Datos ]   [ 4 Resumen ]
+   Las pestañas se ocultan y se ven los dos paneles. Los paneles pasan a
+   display: contents para que sus partes (título, subtotal, lista, total del
+   contador) se coloquen directamente en la rejilla del conteo; así las dos
+   listas quedan en la misma fila de la rejilla y tienen la misma altura. */
+
+/* El título de cada panel solo existe en escritorio */
+.panel__titulo {
+    display: none;
+}
+
+@media screen and (min-width: 1024px) {
+    .main {
+        max-width: 1280px;
+        padding: 32px 32px 64px;
+    }
+
+    .pasos {
+        max-width: 720px;
+    }
+
+    /* Todo está a la vista: sin pestañas, sin botones "Siguiente" y sin la
+       franja del total (la barra "Total del contador" se ve siempre) */
+    .selector,
+    .siguiente-paso,
+    .franja-contador,
+    .franja-contador[hidden] {
+        display: none;
+    }
+
+    /* ----- Conteo a todo el ancho ----- */
+    .columna-conteo {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 24px;
+        margin-bottom: 48px;
+    }
+
+    .panel,
+    .panel.is-oculto {
+        display: contents;
+    }
+
+    #pasoEfectivo {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    /* Fila 2: "Monedas ........ 55,55 €" | "Billetes ........ 100,00 €" */
+    .panel__titulo {
+        display: block;
+        align-self: end;
+        margin: 0 0 10px;
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: var(--tinta);
+    }
+
+    #panelMonedas > .panel__titulo { grid-column: 1; grid-row: 2; }
+    #panelBilletes > .panel__titulo { grid-column: 2; grid-row: 2; }
+
+    /* El subtotal del panel sube junto al título. Su texto "Total de monedas:"
+       se oculta a la vista (font-size: 0) porque el título ya lo dice; el
+       lector de pantalla lo sigue leyendo. Solo se ve la cifra. */
+    .panel > .panel__subtotal:not(.panel__subtotal--contador) {
+        justify-self: end;
+        align-self: end;
+        margin: 0 0 10px;
+        padding: 0;
+        background: none;
+        font-size: 0;
+    }
+
+    .panel > .panel__subtotal:not(.panel__subtotal--contador) span {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: var(--tinta);
+    }
+
+    #panelMonedas > .panel__subtotal:not(.panel__subtotal--contador) { grid-column: 1; grid-row: 2; }
+    #panelBilletes > .panel__subtotal:not(.panel__subtotal--contador) { grid-column: 2; grid-row: 2; }
+
+    /* Fila 3: las dos listas (misma fila → misma altura) */
+    #panelMonedas > .rejilla { grid-column: 1; grid-row: 3; }
+    #panelBilletes > .rejilla { grid-column: 2; grid-row: 3; }
+
+    /* Fila 4: un solo "Total del contador" a todo el ancho */
+    #panelMonedas > .panel__subtotal--contador {
+        display: none;
+    }
+
+    #panelBilletes > .panel__subtotal--contador {
+        grid-column: 1 / -1;
+        grid-row: 4;
+        margin-top: 16px;
+    }
+
+    /* ----- Cada lista: rejilla de 3 columnas de fichas verticales ----- */
+    .rejilla {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-content: start;
+        gap: 10px;
+        padding: 12px 12px 14px;
+    }
+
+    .rejilla__grupo {
+        grid-column: 1 / -1;
+        padding: 4px 2px 0;
+    }
+
+    .rejilla__grupo:not(:first-child) {
+        margin-top: 6px;
+        padding-top: 12px;
+    }
+
+    /* Ficha: ilustración, − cantidad + y subtotal, uno debajo de otro, centrados */
+    .pieza,
+    .rejilla--billetes .pieza {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "ilustracion"
+            "cantidad"
+            "subtotal";
+        justify-items: center;
+        row-gap: 8px;
+        min-height: 0;
+        padding: 12px 6px;
+        border: none;
+        border-radius: var(--radio-control);
+        background: var(--fondo);
+        text-align: center;
+    }
+
+    .pieza__subtotal {
+        text-align: center;
+    }
+
+    .moneda {
+        width: 60px;
+        height: 60px;
+    }
+
+    .billete {
+        width: 110px;
+    }
+
+    /* Entre 1024 y 1279 px la ficha mide ~125 px útiles: botones algo más
+       estrechos (siguen midiendo 44 px de alto) */
+    .pieza__boton {
+        width: 38px;
+    }
+
+    .pieza__input {
+        width: 44px;
+    }
+
+    /* ----- Fondo, Datos y Resumen ----- */
+    .columna-cierre {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        align-items: start;
+    }
+
+    .columna-cierre > .seccion {
+        margin-top: 0;
+    }
+
+    /* 1024-1199 px: Fondo y Datos arriba, Resumen debajo a todo el ancho */
+    #seccionResumen {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ≥1200 px: las tres tarjetas en una fila, en orden de izquierda a derecha */
+@media screen and (min-width: 1200px) {
+    .columna-cierre {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #seccionResumen {
+        grid-column: auto;
+    }
+}
+
+/* ≥1280 px: hay sitio para los botones − y + de 44 px */
+@media screen and (min-width: 1280px) {
+    .pieza__boton {
+        width: 44px;
+    }
+
+    .pieza__input {
+        width: 48px;
+    }
+}
+
+/* ---------- Escritorio (≥1024 px): una sola barra de 80 px ----------
+   Sin cambiar el HTML: la cabecera (logo + pastillas) y la barra de pasos
+   son dos elementos pegajosos (sticky) en top: 0. La barra de pasos sube
+   80 px con margin-top negativo y se coloca encima de la cabecera, en la
+   misma franja: se ven como una sola barra.
+       [CONTROL DE CAJA / federal]   (1)—(2)—(3)—(4)   [📅 20 nov 2026 · COMPLETO]
+   La barra de pasos es transparente y deja pasar los clics (pointer-events)
+   salvo en los propios pasos. El JS mide #barraSuperior (80 px) para
+   desplazarse, así que los saltos siguen dejando el contenido a la vista.
+   Bordes: el contenido interior usa el mismo ancho que .main (1280 px con
+   32 px de margen = 1216 px útiles). */
+@media screen and (min-width: 1024px) {
+    /* ----- Cabecera: franja salvia de 80 px, pegada arriba ----- */
+    .cabecera {
+        position: sticky;
+        top: 0;
+        z-index: 9;
+        height: 80px;
+        padding: 0 32px;
+        border-radius: 0;
+        box-shadow: 0 2px 10px rgba(42, 54, 52, 0.14);
+    }
+
+    .cabecera__interior {
+        max-width: 1216px;
+        height: 100%;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .cabecera__texto {
+        flex: 0 0 auto;
+        margin: 0;
+        padding: 0;
+    }
+
+    .cabecera__etiqueta {
+        margin: 0 0 2px;
+        font-size: 0.7rem;
+    }
+
+    .cabecera__titulo {
+        margin: 0;
+    }
+
+    .cabecera__logo-img {
+        width: 78px;
+    }
+
+    /* Pastilla de fecha y estado en una sola fila */
+    .cabecera__fecha {
+        position: static;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+    }
+
+    /* "Fecha de cierre": oculto a la vista (el calendario y la fecha ya lo
+       dicen), pero lo sigue leyendo el lector de pantalla */
+    .cabecera__fecha-etiqueta {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+    }
+
+    .cabecera__estado {
+        margin-top: 0;
+    }
+
+    /* Detalle decorativo naranja, pequeño, en la esquina derecha */
+    .cabecera::after {
+        width: 110px;
+        height: 110px;
+        right: -46px;
+        bottom: -64px;
+    }
+
+    /* ----- Barra de pasos: encima de la cabecera, en la misma franja ----- */
+    .barra-superior {
+        z-index: 10;
+        height: 80px;
+        margin-top: -80px;
+        display: flex;
+        align-items: center;
+        background: transparent;
+        border-bottom: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        pointer-events: none;
+    }
+
+    .pasos {
+        width: 440px;
+        max-width: 440px;
+        padding: 0;
+        pointer-events: auto;
+    }
+
+    /* Sobre el salvia, los nombres en casi negro (4,96:1) */
+    .pasos__paso,
+    .pasos__paso.is-completado,
+    .pasos__paso.is-activo {
+        color: #1A1A18;
+    }
+
+    /* Completado: salvia oscuro con ✓ blanco (salvia sobre salvia no se vería).
+       :not(.is-activo): el paso activo sigue en naranja aunque tenga datos */
+    .pasos__paso.is-completado:not(.is-activo) .pasos__numero {
+        background: var(--salvia-oscuro);
+        border-color: #FFFFFF;
+    }
+
+    .pasos__paso.is-completado::before,
+    .pasos__paso.is-activo::before {
+        background: var(--salvia-oscuro);
+    }
+
+    /* Contorno de foco blanco: sobre el salvia, el oscuro apenas se ve */
+    .pasos__paso:focus-visible {
+        outline-color: #FFFFFF;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .pasos__paso:hover {
+            color: #000000;
+        }
+    }
+
+    /* ----- Fichas del conteo más bajas: de ~165 a ~140 px ----- */
+    .pieza,
+    .rejilla--billetes .pieza {
+        row-gap: 4px;
+        padding: 6px 6px;
+    }
+
+    .moneda {
+        width: 56px;
+        height: 56px;
+    }
+
+    .rejilla {
+        gap: 8px;
+        padding: 10px 12px 12px;
+    }
+
+    .rejilla__grupo:not(:first-child) {
+        margin-top: 4px;
+        padding-top: 10px;
+    }
+}
+
+/* ≥1280 px: hay sitio para unos pasos más anchos */
+@media screen and (min-width: 1280px) {
+    .pasos {
+        width: 520px;
+        max-width: 520px;
+    }
+}
+
+/* ---------- Escritorio (≥1024 px): Resumen pegajoso y Datos compacta ---------- */
+@media screen and (min-width: 1024px) {
+    /* ----- Datos en dos columnas:
+           Responsable   | Total del día
+           Visa          | Uber            (el par ya existente, a todo el ancho)
+           Gastos        | Efectivo real
+           Efectivo teórico                (a todo el ancho, como "A ingresar" en Fondo)
+           aviso de error                  (a todo el ancho)
+       El HTML no cambia: "order" sube Efectivo real junto a Gastos y baja el
+       Efectivo teórico. El Tab ya iba de Gastos a Efectivo real (entre los dos
+       no hay nada enfocable), así que el orden de teclado sigue siendo lógico. */
+    #seccionDatos .formulario {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 14px;
+        align-items: start;
+    }
+
+    #seccionDatos .formulario > .campo-par {
+        grid-column: 1 / -1;
+    }
+
+    #seccionDatos .formulario > .campo:last-child {
+        order: 1; /* Efectivo real: justo después de Gastos */
+    }
+
+    #seccionDatos .formulario > .resultado-parcial {
+        order: 2;
+        grid-column: 1 / -1;
+    }
+
+    #seccionDatos .formulario > .aviso {
+        order: 3;
+        grid-column: 1 / -1;
+    }
+
+    /* Columnas estrechas: el € y el margen interior del campo, algo menores */
+    #seccionDatos .campo__moneda .campo__input {
+        padding: 12px 50px 12px 12px;
+    }
+
+    #seccionDatos .campo__sufijo {
+        width: 38px;
+    }
+
+    /* ----- Resumen siempre a la vista: pegajoso dentro de su columna -----
+       top = barra superior (80 px) + 16 px de margen. Si el desglose se abre y
+       no cabe en la pantalla, la tarjeta se desplaza por dentro (no se corta). */
+    #seccionResumen {
+        position: sticky;
+        top: 96px;
+        align-self: start;
+        max-height: calc(100vh - 112px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    /* Espaciados más ajustados para que quepa en 1366 × 680 sin quitar nada */
+    #seccionResumen .seccion__titulo {
+        margin-bottom: 10px;
+    }
+
+    #seccionResumen .resumen {
+        gap: 10px;
+    }
+
+    #seccionResumen .resumen__cabecera {
+        padding-bottom: 8px;
+    }
+
+    #seccionResumen .resumen__logo {
+        height: 32px;
+    }
+
+    #seccionResumen .estado-cierre {
+        padding: 9px 12px;
+    }
+
+    #seccionResumen .resumen__tarjeta--claves .resumen__fila {
+        padding: 9px 0;
+    }
+
+    #seccionResumen .resumen__acciones {
+        margin-top: 10px;
+    }
+
+    #seccionResumen .resumen__acciones > button,
+    #seccionResumen .resumen__desglose-boton {
+        min-height: 48px;
+    }
+
+    /* ----- 1024-1199 px: Fondo y Datos a la izquierda, Resumen a la derecha -----
+       El Resumen ocupa la altura de las dos filas y es pegajoso: se ve
+       mientras se rellena Fondo o Datos. (Probado: con Fondo y Resumen
+       apilados a la izquierda, el Resumen quedaba fuera de pantalla mientras
+       se rellenaba Datos, porque esa columna era más alta que Datos.) */
+    .columna-cierre {
+        grid-template-areas:
+            "fondo resumen"
+            "datos resumen";
+    }
+
+    #seccionFondo { grid-area: fondo; }
+    #seccionDatos { grid-area: datos; }
+    #seccionResumen { grid-area: resumen; }
+}
+
+/* ≥1200 px: las tres tarjetas en una fila (Fondo | Datos | Resumen) */
+@media screen and (min-width: 1200px) {
+    .columna-cierre {
+        grid-template-areas: "fondo datos resumen";
+    }
+}
+
+/* ---------- El paso en el que estás, también en naranja en el contenido ----------
+   El número del título del paso activo (1, 2, 3 o 4 junto a "Contar efectivo",
+   "Fondo de caja"...) se pone naranja como el paso activo de la barra, con un
+   cambio de color suave. No hace falta JavaScript nuevo: :has() lee la clase
+   is-activo que el JS ya pone en la barra de pasos.
+   (Móvil y tablet: el paso que estás viendo. Escritorio: el primer paso pendiente.)
+   Solo en pantalla: los títulos de paso no se imprimen. */
+@media screen {
+    .seccion__num {
+        transition: background-color 350ms var(--ease-out), color 350ms var(--ease-out), box-shadow 350ms var(--ease-out);
+    }
+
+    body:has(.pasos__paso.is-activo[data-paso="efectivo"]) #pasoEfectivo .seccion__num,
+    body:has(.pasos__paso.is-activo[data-paso="fondo"]) #seccionFondo .seccion__num,
+    body:has(.pasos__paso.is-activo[data-paso="datos"]) #seccionDatos .seccion__num,
+    body:has(.pasos__paso.is-activo[data-paso="resumen"]) #seccionResumen .seccion__num {
+        background-color: var(--mostaza);
+        color: var(--tinta); /* texto oscuro sobre naranja: 4,97:1 */
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--mostaza) 22%, transparent);
+    }
+
+    /* Al activarse un paso, su círculo en la barra hace un pequeño "pop" */
+    .pasos__paso.is-activo .pasos__numero {
+        animation: paso-activo 420ms var(--ease-out);
+    }
+}
+
+@keyframes paso-activo {
+    0% {
+        transform: scale(0.8);
+    }
+    55% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Con "reducir movimiento": el color cambia sin transición y sin "pop" */
+@media screen and (prefers-reduced-motion: reduce) {
+    .seccion__num {
+        transition: none;
+    }
+
+    .pasos__paso.is-activo .pasos__numero {
+        animation: none;
+    }
+}
+
