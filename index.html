@@ -31,33 +31,46 @@
                     </svg>
                     <span id="fechaCierre">—</span>
                 </span>
+                <!-- Dice si falta información para cerrar (no si el resultado es bueno o malo).
+                     Lo rellena mostrarEstadoCierre() con la misma condición que cierreCompleto(). -->
+                <span class="cabecera__estado" id="estadoCierreCabecera" data-estado="pendiente">Pendiente</span>
             </div>
         </div>
     </header>
 
+    <!-- Barra pegada ARRIBA (no abajo: abajo la tapaba el teclado del iPhone).
+         Contiene los pasos y, solo en el paso 1, la franja del total contado. -->
+    <div class="barra-superior" id="barraSuperior">
     <nav class="pasos" id="pasos" aria-label="Progreso del cierre">
         <a class="pasos__paso" href="#pasoEfectivo" data-paso="efectivo" aria-label="Paso 1: Efectivo">
             <span class="pasos__numero">1</span>
             <span class="pasos__etiqueta">Efectivo</span>
         </a>
-        <a class="pasos__paso" href="#seccionDatos" data-paso="datos" aria-label="Paso 2: Datos">
+        <a class="pasos__paso" href="#seccionFondo" data-paso="fondo" aria-label="Paso 2: Fondo de caja">
             <span class="pasos__numero">2</span>
-            <span class="pasos__etiqueta">Datos</span>
-        </a>
-        <a class="pasos__paso" href="#seccionFondo" data-paso="fondo" aria-label="Paso 3: Fondo de caja">
-            <span class="pasos__numero">3</span>
             <span class="pasos__etiqueta">Fondo</span>
         </a>
-        <a class="pasos__paso" href="#seccionResumen" data-paso="resumen" aria-label="Paso 4: Resultado">
+        <a class="pasos__paso" href="#seccionDatos" data-paso="datos" aria-label="Paso 3: Datos">
+            <span class="pasos__numero">3</span>
+            <span class="pasos__etiqueta">Datos</span>
+        </a>
+        <a class="pasos__paso" href="#seccionResumen" data-paso="resumen" aria-label="Paso 4: Resumen">
             <span class="pasos__numero">4</span>
-            <span class="pasos__etiqueta">Resultado</span>
+            <span class="pasos__etiqueta">Resumen</span>
         </a>
     </nav>
+    <!-- Total del contador visible mientras se cuenta. La cifra lleva la clase
+         js-total-contador: calcularTotal() la escribe y la hace destellar. -->
+    <div class="franja-contador" id="franjaContador" hidden>
+        <span class="franja-contador__etiqueta">Efectivo contado</span>
+        <span class="franja-contador__cifra js-total-contador">0,00 €</span>
+    </div>
+    </div>
 
     <main class="main">
-        <p class="main__intro">Sigue estos pasos para cerrar la caja: cuenta el efectivo, completa los datos del día, define el fondo y revisa el resultado.</p>
+        <p class="main__intro">Sigue estos pasos para cerrar la caja: cuenta el efectivo, define el fondo, completa los datos del día y revisa el resultado.</p>
 
-        <h2 class="seccion__titulo" id="pasoEfectivo">1. Contar efectivo</h2>
+        <h2 class="seccion__titulo" id="pasoEfectivo"><span class="seccion__num">1</span>Contar efectivo</h2>
 
         <div class="selector" id="selector" role="tablist" aria-label="Tipo de dinero">
             <button class="selector__opcion is-activa" id="tabMonedas" role="tab" aria-selected="true" aria-controls="panelMonedas" onclick="mostrarPanel('monedas')">
@@ -476,13 +489,72 @@
         </section>
 
         <div class="siguiente-paso">
-            <button type="button" class="boton-secundario" onclick="irAlPaso('seccionDatos')">
-                Siguiente: Datos del cierre <span class="siguiente-paso__flecha" aria-hidden="true">↓</span>
+            <button type="button" class="boton-secundario" onclick="irAlPaso('seccionFondo')">
+                Siguiente: Fondo de caja <span class="siguiente-paso__flecha" aria-hidden="true">↓</span>
             </button>
         </div>
 
+        <section class="seccion" id="seccionFondo" aria-labelledby="tituloFondo">
+            <h2 class="seccion__titulo" id="tituloFondo" tabindex="-1"><span class="seccion__num">2</span>Fondo de caja <span class="seccion__titulo-nota">Independiente del resultado del cierre</span></h2>
+
+            <div class="formulario">
+                <div class="campo">
+                    <label for="fondoActual">Fondo actual</label>
+                    <div class="campo__moneda">
+                        <input class="campo__input" type="text" id="fondoActual" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); actualizarFondo()">
+                        <span class="campo__sufijo">€</span>
+                    </div>
+                </div>
+
+                <!-- El cálculo continúa el campo "Fondo actual" de arriba:
+                     Fondo actual + Total de monedas = Total disponible -->
+                <div class="fondo-resumen">
+                    <div class="fondo-resumen__linea">
+                        <span><span class="fondo-resumen__operador">+</span> Total de monedas</span>
+                        <span id="cifraSumaMonedas">0,00 €</span>
+                    </div>
+                    <div class="fondo-resumen__linea fondo-resumen__linea--suma">
+                        <span><span class="fondo-resumen__operador">=</span> Total disponible</span>
+                        <span id="cifraTotalDisponible">0,00 €</span>
+                    </div>
+                    <div class="fondo-resumen__linea fondo-resumen__linea--destacada">
+                        <span>Fondo final</span>
+                        <span id="cifraFondoFinal">0,00 €</span>
+                    </div>
+                    <div class="fondo-resumen__resto" id="bloqueRestoFondo" hidden>
+                        <div class="fondo-resumen__linea">
+                            <span>Resto fuera del fondo</span>
+                            <span id="cifraRestoFondo">0,00 €</span>
+                        </div>
+                        <p class="campo__ayuda">Estos céntimos no entran en el fondo; se suman al efectivo real en el resultado.</p>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label for="fondoObjetivo">Fondo objetivo</label>
+                    <p class="campo__ayuda">Efectivo que quieres dejar en la caja para el día siguiente.</p>
+                    <div class="campo__moneda">
+                        <input class="campo__input" type="text" id="fondoObjetivo" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); actualizarFondo()">
+                        <span class="campo__sufijo">€</span>
+                    </div>
+                </div>
+
+                <div class="resultado-parcial">
+                    <span class="resultado-parcial__etiqueta">A ingresar para completar el fondo</span>
+                    <span class="resultado-parcial__cifra" id="cifraAIngresar">— €</span>
+                    <p class="resultado-parcial__ayuda">Lo que falta para llegar al fondo objetivo.</p>
+                </div>
+            </div>
+
+            <div class="siguiente-paso">
+                <button type="button" class="boton-secundario" onclick="irAlPaso('seccionDatos')">
+                    Siguiente: Datos del cierre <span class="siguiente-paso__flecha" aria-hidden="true">↓</span>
+                </button>
+            </div>
+        </section>
+
         <section class="seccion" id="seccionDatos" aria-labelledby="tituloDatos">
-            <h2 class="seccion__titulo" id="tituloDatos" tabindex="-1">2. Datos del cierre <span class="seccion__titulo-nota">— para completar el cierre</span></h2>
+            <h2 class="seccion__titulo" id="tituloDatos" tabindex="-1"><span class="seccion__num">3</span>Datos del cierre <span class="seccion__titulo-nota">Para completar el cierre</span></h2>
 
             <div class="formulario">
                 <div class="campo">
@@ -541,7 +613,7 @@
                         <span class="campo__sufijo">€</span>
                     </div>
                     <p class="campo__ayuda campo__ayuda--debajo" id="ayudaEfectivoReal">Escribe el efectivo que tienes. El resto fuera del fondo se suma solo en el resultado.</p>
-                    <p class="aviso" id="avisoEfectivoRealVacio" role="alert" hidden>Falta el efectivo real. Escríbelo aquí para ver el resultado.</p>
+                    <p class="aviso aviso--info" id="avisoEfectivoRealVacio" role="status" hidden>Falta el efectivo real. Escríbelo aquí para ver el resultado.</p>
                 </div>
             </div>
 
@@ -550,66 +622,7 @@
                 <p class="resultado-final__estado" id="estadoResultado" hidden></p>
                 <p class="resultado-final__cifra" id="cifraDiferencia" hidden></p>
                 <p class="resultado-final__significado" id="significadoResultado" hidden></p>
-                <p class="resultado-final__sub" id="subResultado">Falta: total del día, efectivo real, fondo actual (paso 3)</p>
-            </div>
-
-            <div class="siguiente-paso">
-                <button type="button" class="boton-secundario" onclick="irAlPaso('seccionFondo')">
-                    Siguiente: Fondo de caja <span class="siguiente-paso__flecha" aria-hidden="true">↓</span>
-                </button>
-            </div>
-        </section>
-
-        <section class="seccion" id="seccionFondo" aria-labelledby="tituloFondo">
-            <h2 class="seccion__titulo" id="tituloFondo" tabindex="-1">3. Fondo de caja <span class="seccion__titulo-nota">— independiente del resultado del cierre</span></h2>
-
-            <div class="formulario">
-                <div class="campo">
-                    <label for="fondoActual">Fondo actual</label>
-                    <div class="campo__moneda">
-                        <input class="campo__input" type="text" id="fondoActual" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); actualizarFondo()">
-                        <span class="campo__sufijo">€</span>
-                    </div>
-                </div>
-
-                <!-- El cálculo continúa el campo "Fondo actual" de arriba:
-                     Fondo actual + Total de monedas = Total disponible -->
-                <div class="fondo-resumen">
-                    <div class="fondo-resumen__linea">
-                        <span><span class="fondo-resumen__operador">+</span> Total de monedas</span>
-                        <span id="cifraSumaMonedas">0,00 €</span>
-                    </div>
-                    <div class="fondo-resumen__linea fondo-resumen__linea--suma">
-                        <span><span class="fondo-resumen__operador">=</span> Total disponible</span>
-                        <span id="cifraTotalDisponible">0,00 €</span>
-                    </div>
-                    <div class="fondo-resumen__linea fondo-resumen__linea--destacada">
-                        <span>Fondo final</span>
-                        <span id="cifraFondoFinal">0,00 €</span>
-                    </div>
-                    <div class="fondo-resumen__resto" id="bloqueRestoFondo" hidden>
-                        <div class="fondo-resumen__linea">
-                            <span>Resto fuera del fondo</span>
-                            <span id="cifraRestoFondo">0,00 €</span>
-                        </div>
-                        <p class="campo__ayuda">Estos céntimos no entran en el fondo; se suman al efectivo real en el resultado.</p>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <label for="fondoObjetivo">Fondo objetivo</label>
-                    <p class="campo__ayuda">Efectivo que quieres dejar en la caja para el día siguiente.</p>
-                    <div class="campo__moneda">
-                        <input class="campo__input" type="text" id="fondoObjetivo" inputmode="decimal" placeholder="0,00" oninput="filtrarEntradaDinero(this); actualizarFondo()">
-                        <span class="campo__sufijo">€</span>
-                    </div>
-                </div>
-
-                <div class="resultado-parcial">
-                    <span class="resultado-parcial__etiqueta">A ingresar para completar el fondo</span>
-                    <span class="resultado-parcial__cifra" id="cifraAIngresar">— €</span>
-                    <p class="resultado-parcial__ayuda">Lo que falta para llegar al fondo objetivo.</p>
-                </div>
+                <p class="resultado-final__sub" id="subResultado">Falta: total del día, efectivo real, fondo actual (paso 2)</p>
             </div>
 
             <div class="siguiente-paso">
@@ -620,19 +633,42 @@
         </section>
 
         <section class="seccion" id="seccionResumen" aria-labelledby="tituloResumen">
-            <h2 class="seccion__titulo" id="tituloResumen" tabindex="-1">4. Resumen del cierre</h2>
-            <!-- Frase fija: dice cuándo está terminado el cierre, señalando las dos filas de abajo -->
-            <p class="estado-cierre">Cuando el resultado del paso 2 y «A ingresar» tengan valor, el cierre está terminado: descarga el resumen.</p>
-
+            <h2 class="seccion__titulo" id="tituloResumen" tabindex="-1"><span class="seccion__num">4</span>Resumen del cierre</h2>
             <div class="resumen" id="tarjetaResumen">
                 <div class="resumen__cabecera">
-                    <span class="resumen__empresa">federal</span>
-                    <span class="resumen__fecha" id="resumenFecha">—</span>
+                    <span class="resumen__empresa">
+                        <img class="resumen__logo" src="img/logo-federal.webp" alt="Federal">
+                        <span class="resumen__titulo-informe solo-impresion">Cierre de caja</span>
+                    </span>
+                    <span class="resumen__cabecera-datos">
+                        <span class="resumen__fecha" id="resumenFecha">—</span>
+                        <!-- Solo aparece cuando hay responsable escrito -->
+                        <span class="resumen__responsable" id="resumenResponsableCabecera" hidden></span>
+                    </span>
                 </div>
 
-                <!-- Lo esencial, siempre visible -->
-                <div class="resumen__tarjeta resumen__tarjeta--esencial">
+                <!-- Estado real del cierre: lo escribe mostrarEstadoCierre().
+                     En el PDF solo sale si el cierre está pendiente. -->
+                <p class="estado-cierre" id="estadoCierre" aria-live="polite">Cierre pendiente</p>
+
+                <!-- Cifras clave, siempre visibles. No se calculan aquí: las filas
+                     llevan las mismas clases js- que el desglose y actualizarResumen()
+                     las rellena todas a la vez. -->
+                <div class="resumen__tarjeta resumen__tarjeta--claves">
+                    <p class="resumen__tarjeta-titulo solo-impresion">Resultado del cierre</p>
                     <dl class="resumen__lista">
+                        <div class="resumen__fila resumen__fila--destacada js-diferencia">
+                            <dt>Diferencia</dt>
+                            <dd>—</dd>
+                        </div>
+                        <div class="resumen__fila js-fila-resto" hidden>
+                            <dt>Resto fuera del fondo</dt>
+                            <dd class="js-resto-fondo">0,00 €</dd>
+                        </div>
+                        <div class="resumen__fila">
+                            <dt>Fondo final</dt>
+                            <dd class="js-fondo-final">0,00 €</dd>
+                        </div>
                         <div class="resumen__fila resumen__fila--destacada js-a-ingresar">
                             <dt>A ingresar para completar el fondo</dt>
                             <dd>— €</dd>
@@ -694,13 +730,9 @@
                             <dd id="resumenEfectivoTeorico">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
-                            <dt>Efectivo real</dt>
+                            <!-- El resto entra en la diferencia: se suma directamente al efectivo real -->
+                            <dt>Efectivo real + resto del fondo</dt>
                             <dd id="resumenEfectivoReal">0,00 €</dd>
-                        </div>
-                        <!-- El resto entra en la diferencia: se muestra junto a ella (y sale en el PDF) -->
-                        <div class="resumen__fila">
-                            <dt>+ Resto fuera del fondo</dt>
-                            <dd class="js-resto-fondo">0,00 €</dd>
                         </div>
                         <div class="resumen__fila resumen__fila--destacada js-diferencia">
                             <dt>Diferencia</dt>
@@ -726,7 +758,7 @@
                         </div>
                         <div class="resumen__fila">
                             <dt>Fondo final (múltiplo de 5)</dt>
-                            <dd id="resumenFondoFinal">0,00 €</dd>
+                            <dd class="js-fondo-final">0,00 €</dd>
                         </div>
                         <div class="resumen__fila">
                             <dt>Resto fuera del fondo</dt>
