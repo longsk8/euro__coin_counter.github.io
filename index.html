@@ -62,29 +62,37 @@
     <!-- Total del contador visible mientras se cuenta. La cifra lleva la clase
          js-total-contador: calcularTotal() la escribe y la hace destellar. -->
     <div class="franja-contador" id="franjaContador" hidden>
-        <span class="franja-contador__etiqueta">Efectivo contado</span>
+        <span class="franja-contador__etiqueta">Total del contador</span>
         <span class="franja-contador__cifra js-total-contador">0,00 €</span>
     </div>
     </div>
 
     <main class="main">
-        <p class="main__intro">Sigue estos pasos para cerrar la caja: cuenta el efectivo, define el fondo, completa los datos del día y revisa el resultado.</p>
+        <p class="main__intro">Cuenta el efectivo, define el fondo, completa los datos y revisa el resultado.</p>
 
+        <!-- Columna izquierda en escritorio (≥1024 px): el conteo de efectivo.
+             En móvil no cambia nada: es un contenedor sin estilos. -->
+        <div class="columna-conteo">
         <h2 class="seccion__titulo" id="pasoEfectivo"><span class="seccion__num">1</span>Contar efectivo</h2>
 
         <div class="selector" id="selector" role="tablist" aria-label="Tipo de dinero">
             <button class="selector__opcion is-activa" id="tabMonedas" role="tab" aria-selected="true" aria-controls="panelMonedas" onclick="mostrarPanel('monedas')">
                 <span class="selector__icono selector__icono--moneda"></span>
                 Monedas
+                <span class="selector__total" id="totalTabMonedas">0,00 €</span>
             </button>
             <button class="selector__opcion" id="tabBilletes" role="tab" aria-selected="false" aria-controls="panelBilletes" onclick="mostrarPanel('billetes')">
                 <span class="selector__icono selector__icono--billete"></span>
                 Billetes
+                <span class="selector__total" id="totalTabBilletes">0,00 €</span>
             </button>
             <span class="selector__realce" id="realceSelector" aria-hidden="true"></span>
         </div>
 
         <section class="panel" id="panelMonedas" role="tabpanel" aria-labelledby="tabMonedas">
+            <!-- Solo en escritorio (≥1024 px), donde las pestañas se ocultan. Su subtotal
+                 es la barra "Total de monedas" del final del panel, que el CSS sube aquí. -->
+            <h3 class="panel__titulo">Monedas</h3>
             <div class="rejilla">
                 <p class="rejilla__grupo">Euros</p>
                 <div class="pieza">
@@ -110,7 +118,13 @@
                         <text class="moneda__numero-sombra" x="51" y="53" text-anchor="middle" dominant-baseline="middle">2</text>
                         <text class="moneda__numero" x="50" y="51" text-anchor="middle" dominant-baseline="middle">2</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="numero1" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 2 euros">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear.
+                         tabindex="-1": funcionan con ratón y toque, pero el Tab va de campo en campo -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar una moneda de 2 euros">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="numero1" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 2 euros">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir una moneda de 2 euros">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultado1">0,00 €</span></p>
                 </div>
 
@@ -137,7 +151,12 @@
                         <text class="moneda__numero-sombra" x="51" y="53" text-anchor="middle" dominant-baseline="middle">1</text>
                         <text class="moneda__numero" x="50" y="51" text-anchor="middle" dominant-baseline="middle">1</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="numero2" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 1 euro">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar una moneda de 1 euro">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="numero2" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 1 euro">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir una moneda de 1 euro">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultado2">0,00 €</span></p>
                 </div>
 
@@ -161,7 +180,12 @@
                         <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">50</text>
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">50</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="numero3" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 50 céntimos">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar una moneda de 50 céntimos">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="numero3" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 50 céntimos">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir una moneda de 50 céntimos">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultado3">0,00 €</span></p>
                 </div>
 
@@ -184,7 +208,12 @@
                         <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">20</text>
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">20</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="numero4" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 20 céntimos">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar una moneda de 20 céntimos">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="numero4" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 20 céntimos">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir una moneda de 20 céntimos">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultado4">0,00 €</span></p>
                 </div>
 
@@ -207,7 +236,12 @@
                         <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">10</text>
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">10</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="numero5" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 10 céntimos">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar una moneda de 10 céntimos">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="numero5" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 10 céntimos">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir una moneda de 10 céntimos">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultado5">0,00 €</span></p>
                 </div>
 
@@ -230,7 +264,12 @@
                         <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">5</text>
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">5</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="numero6" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 5 céntimos">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar una moneda de 5 céntimos">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="numero6" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 5 céntimos">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir una moneda de 5 céntimos">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultado6">0,00 €</span></p>
                 </div>
 
@@ -253,7 +292,12 @@
                         <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">2</text>
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">2</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="numero7" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 2 céntimos">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar una moneda de 2 céntimos">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="numero7" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 2 céntimos">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir una moneda de 2 céntimos">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultado7">0,00 €</span></p>
                 </div>
 
@@ -276,7 +320,12 @@
                         <text class="moneda__numero-sombra" x="51" y="63" text-anchor="middle" dominant-baseline="middle">1</text>
                         <text class="moneda__numero" x="50" y="61" text-anchor="middle" dominant-baseline="middle">1</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="numero8" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 1 céntimo">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar una moneda de 1 céntimo">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="numero8" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de monedas de 1 céntimo">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir una moneda de 1 céntimo">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultado8">0,00 €</span></p>
                 </div>
             </div>
@@ -285,6 +334,9 @@
         </section>
 
         <section class="panel is-oculto" id="panelBilletes" role="tabpanel" aria-labelledby="tabBilletes">
+            <!-- Solo en escritorio (≥1024 px), donde las pestañas se ocultan. Su subtotal
+                 es la barra "Total de billetes" del final del panel, que el CSS sube aquí. -->
+            <h3 class="panel__titulo">Billetes</h3>
             <div class="rejilla rejilla--billetes">
                 <p class="rejilla__grupo">Billetes grandes</p>
                 <div class="pieza pieza--billete">
@@ -317,7 +369,12 @@
                         <text class="billete__numero-esquina" x="28" y="92">200</text>
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="billete1" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 200 euros">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar un billete de 200 euros">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="billete1" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 200 euros">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir un billete de 200 euros">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultadoB1">0,00 €</span></p>
                 </div>
 
@@ -350,7 +407,12 @@
                         <text class="billete__numero-esquina" x="28" y="92">100</text>
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="billete2" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 100 euros">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar un billete de 100 euros">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="billete2" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 100 euros">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir un billete de 100 euros">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultadoB2">0,00 €</span></p>
                 </div>
 
@@ -383,7 +445,12 @@
                         <text class="billete__numero-esquina" x="28" y="92">50</text>
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="billete3" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 50 euros">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar un billete de 50 euros">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="billete3" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 50 euros">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir un billete de 50 euros">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultadoB3">0,00 €</span></p>
                 </div>
 
@@ -414,7 +481,12 @@
                         <text class="billete__numero-esquina" x="28" y="92">20</text>
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="billete4" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 20 euros">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar un billete de 20 euros">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="billete4" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 20 euros">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir un billete de 20 euros">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultadoB4">0,00 €</span></p>
                 </div>
 
@@ -445,7 +517,12 @@
                         <text class="billete__numero-esquina" x="28" y="92">10</text>
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="billete5" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 10 euros">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar un billete de 10 euros">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="billete5" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 10 euros">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir un billete de 10 euros">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultadoB5">0,00 €</span></p>
                 </div>
 
@@ -480,7 +557,12 @@
                         <text class="billete__numero-esquina" x="28" y="92">5</text>
                         <text class="billete__eur" x="95" y="98">EUR</text>
                     </svg>
-                    <input class="pieza__input" type="number" autocomplete="off" id="billete6" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 5 euros">
+                    <!-- − y +: cambian la cantidad y lanzan el mismo evento "input" que al teclear -->
+                    <div class="pieza__cantidad">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="-1" aria-label="Quitar un billete de 5 euros">−</button>
+                        <input class="pieza__input" type="number" autocomplete="off" id="billete6" min="0" step="1" inputmode="numeric" oninput="calcularTotal()" onkeypress="return (event.charCode != 45)" aria-label="Cantidad de billetes de 5 euros">
+                        <button type="button" class="pieza__boton" tabindex="-1" data-cambio="1" aria-label="Añadir un billete de 5 euros">+</button>
+                    </div>
                     <p class="pieza__subtotal"><span id="resultadoB6">0,00 €</span></p>
                 </div>
             </div>
@@ -493,7 +575,11 @@
                 Siguiente: Fondo de caja <span class="siguiente-paso__flecha" aria-hidden="true">↓</span>
             </button>
         </div>
+        </div>
 
+        <!-- Columna derecha en escritorio (≥1024 px): pasos 2, 3 y 4 apilados.
+             En móvil no cambia nada: es un contenedor sin estilos. -->
+        <div class="columna-cierre">
         <section class="seccion" id="seccionFondo" aria-labelledby="tituloFondo">
             <h2 class="seccion__titulo" id="tituloFondo" tabindex="-1"><span class="seccion__num">2</span>Fondo de caja <span class="seccion__titulo-nota">Independiente del resultado del cierre</span></h2>
 
@@ -653,11 +739,13 @@
 
                 <!-- Cifras clave, siempre visibles. No se calculan aquí: las filas
                      llevan las mismas clases js- que el desglose y actualizarResumen()
-                     las rellena todas a la vez. -->
+                     las rellena todas a la vez. (La diferencia solo se imprime: en pantalla
+                     ya sale en el resultado del paso 3.) -->
                 <div class="resumen__tarjeta resumen__tarjeta--claves">
                     <p class="resumen__tarjeta-titulo solo-impresion">Resultado del cierre</p>
                     <dl class="resumen__lista">
-                        <div class="resumen__fila resumen__fila--destacada js-diferencia">
+                        <!-- Solo en el PDF: en pantalla la diferencia ya sale en el paso 3 -->
+                        <div class="resumen__fila resumen__fila--destacada js-diferencia solo-impresion">
                             <dt>Diferencia</dt>
                             <dd>—</dd>
                         </div>
@@ -788,6 +876,7 @@
             </div>
             <p class="resumen__nota-pdf">Se abrirá la ventana de impresión: elige «Guardar como PDF».</p>
         </section>
+        </div>
 
     </main>
 
