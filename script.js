@@ -485,9 +485,9 @@ function textoDiferencia(diferencia) {
     return `${etiqueta} ${formatearCentimos(Math.abs(diferencia))}`;
 }
 
-// La diferencia sale dos veces en el resumen: en las cifras clave (arriba) y
-// en la tarjeta "Cierre del día" del desglose (la que se imprime). Las dos
-// filas llevan la clase "js-diferencia".
+// La diferencia sale dos veces en el resumen, en filas con la clase
+// "js-diferencia": en la tarjeta "Cierre del día" del desglose y en las
+// cifras clave (esta última solo se imprime: en pantalla ya está el paso 3).
 // Con el cierre incompleto se muestra "—" y sin color.
 function mostrarDiferenciaResumen(diferencia) {
     const completo = cierreCompleto();
@@ -621,9 +621,55 @@ function pasoTieneDatos(paso) {
     }
 }
 
+// ---------- Escritorio (≥1024 px): la barra de pasos indica PROGRESO ----------
+// En escritorio Fondo, Datos y Resumen están a la vez en pantalla, así que
+// "el paso que estás viendo" no tiene sentido. La barra muestra:
+//   - ✓ en los pasos hechos (sin nada pendiente),
+//   - como activo, el primer paso que falta por completar.
+// No calcula nada nuevo: usa pasoTieneDatos(), pendientesDelResultado() y
+// cierreCompleto(), las mismas funciones que deciden el resultado.
+const CONSULTA_ESCRITORIO = window.matchMedia("(min-width: 1024px)");
+const ORDEN_PASOS = ["efectivo", "fondo", "datos", "resumen"];
+
+function esEscritorio() {
+    return CONSULTA_ESCRITORIO.matches;
+}
+
+// ¿Está hecho este paso? (en escritorio)
+// Fondo y Datos están hechos cuando no tienen datos pendientes para el
+// resultado: pendientesDelResultado() ya dice en qué paso está cada uno.
+function pasoHechoEscritorio(paso) {
+    const pasosPendientes = pendientesDelResultado().map((p) => p.paso);
+    switch (paso) {
+        case "efectivo":
+            return pasoTieneDatos("efectivo");
+        case "fondo":
+            return !pasosPendientes.includes(2);
+        case "datos":
+            return !pasosPendientes.includes(3);
+        case "resumen":
+            return cierreCompleto();
+        default:
+            return false;
+    }
+}
+
+// El primer paso que falta; con todo hecho, el Resumen (para descargarlo)
+function primerPasoPendiente() {
+    return ORDEN_PASOS.find((paso) => !pasoHechoEscritorio(paso)) || "resumen";
+}
+
+// Marca ✓ y paso activo. En móvil y tablet, igual que siempre: ✓ si el paso
+// tiene datos, y el activo lo decide el scroll (inicializarPasos).
 function actualizarEstadoPasos() {
+    const escritorio = esEscritorio();
+    const activo = escritorio ? primerPasoPendiente() : null;
+
     document.querySelectorAll(".pasos__paso").forEach((enlace) => {
-        enlace.classList.toggle("is-completado", pasoTieneDatos(enlace.dataset.paso));
+        const paso = enlace.dataset.paso;
+        const hecho = escritorio ? pasoHechoEscritorio(paso) : pasoTieneDatos(paso);
+        enlace.classList.toggle("is-completado", hecho);
+        if (escritorio) enlace.classList.toggle("is-activo", paso === activo);
     });
 }
 
@@ -732,6 +778,9 @@ function inicializarPasos() {
 
     function marcarActivo(pasoActivo) {
         pasoActual = pasoActivo;
+        // En escritorio el activo no depende del scroll: lo decide
+        // actualizarEstadoPasos() (el primer paso pendiente)
+        if (esEscritorio()) return;
         enlaces.forEach((enlace) => {
             enlace.classList.toggle("is-activo", enlace.dataset.paso === pasoActivo);
         });
@@ -803,6 +852,13 @@ function inicializarPasos() {
     } else {
         marcarActivo("efectivo");
     }
+
+    // Al cruzar los 1024 px (girar la tablet, cambiar el tamaño de la ventana)
+    // se recalcula la barra con las reglas del nuevo tamaño
+    CONSULTA_ESCRITORIO.addEventListener("change", () => {
+        actualizarEstadoPasos();
+        if (!esEscritorio()) marcarActivo(pasoActual);
+    });
 }
 
 // ---------- Inicialización ----------
@@ -812,4 +868,42 @@ document.addEventListener("DOMContentLoaded", () => {
     calcularTotal();
     calcularCierre();
     inicializarPasos();
+});
+// ---------- Botones − y + del contador ----------
+// No calculan nada: cambian el número del input y lanzan el mismo evento
+// "input" que se produce al teclear. Así el oninput="calcularTotal()" del
+// HTML hace el resto, exactamente igual que si el usuario lo escribiera.
+// Un solo escuchador para los 28 botones ("delegación de eventos"): el clic
+// sube hasta document y ahí se mira si salió de un botón .pieza__boton.
+function cambiarCantidad(boton) {
+    const input = boton.parentElement.querySelector(".pieza__input");
+    const actual = parseInt(input.value) || 0;
+    const nueva = Math.max(0, actual + Number(boton.dataset.cambio)); // nunca negativa
+
+    // Con 0 se deja vacío, igual que un campo sin tocar
+    input.value = nueva === 0 ? "" : String(nueva);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+document.addEventListener("click", (evento) => {
+    const boton = evento.target.closest(".pieza__boton");
+    if (boton) cambiarCantidad(boton);
+});
+
+// ---------- Subtotal en cada pestaña ("Billetes 140,00 €") ----------
+// Copia el texto de "Total de monedas" / "Total de billetes" en la pestaña.
+// Usa un MutationObserver (avisa cuando cambia el texto de un elemento), así
+// no hay que tocar calcularTotal() y funciona también con "Nuevo cierre".
+function copiarTotalEnPestana(idOrigen, idDestino) {
+    const origen = document.getElementById(idOrigen);
+    const destino = document.getElementById(idDestino);
+    const copiar = () => { destino.textContent = origen.textContent; };
+
+    copiar();
+    new MutationObserver(copiar).observe(origen, { childList: true, characterData: true, subtree: true });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    copiarTotalEnPestana("subtotalMonedas", "totalTabMonedas");
+    copiarTotalEnPestana("subtotalBilletes", "totalTabBilletes");
 });
