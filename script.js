@@ -192,7 +192,7 @@ function efectivoTeoricoCentimos() {
 }
 
 // Diferencia = (Efectivo real + Resto fuera del fondo) − Efectivo teórico
-// El resto es el mismo que calcula el paso 3 (calcularFondo), no otro cálculo:
+// El resto es el mismo que calcula el paso 2 (calcularFondo), no otro cálculo:
 // son los céntimos que no entran en el fondo al redondear a múltiplo de 5 €.
 function diferenciaCentimos() {
     const resto = calcularFondo().resto;
@@ -216,25 +216,64 @@ function efectivoRealVacio() {
 // - Fondo actual: sin él no se sabe el resto fuera del fondo, que entra
 //   en la diferencia.
 // Cada pendiente guarda también en qué paso está, para poder decirle al
-// usuario dónde buscarlo.
+// usuario dónde buscarlo, y el id de su campo, para poder llevarle hasta él.
 function pendientesDelResultado() {
     const pendientes = [];
-    if (campoVacio("totalDia")) pendientes.push({ nombre: "total del día", paso: 2 });
-    if (efectivoRealVacio()) pendientes.push({ nombre: "efectivo real", paso: 2 });
-    if (campoVacio("fondoActual")) pendientes.push({ nombre: "fondo actual", paso: 3 });
+    if (campoVacio("totalDia")) pendientes.push({ nombre: "total del día", paso: 3, campo: "totalDia" });
+    if (efectivoRealVacio()) pendientes.push({ nombre: "efectivo real", paso: 3, campo: "efectivoReal" });
+    if (campoVacio("fondoActual")) pendientes.push({ nombre: "fondo actual", paso: 2, campo: "fondoActual" });
     return pendientes;
 }
 
-// Convierte la lista en texto. Si un dato está en otro paso distinto del
-// que muestra el mensaje, se dice cuál: "fondo actual (paso 3)".
+// Nombre de un pendiente. Si está en otro paso distinto del que muestra
+// el mensaje, se dice cuál: "fondo actual (paso 2)".
+function nombrePendiente(pendiente, pasoDelMensaje) {
+    if (pendiente.paso === pasoDelMensaje) return pendiente.nombre;
+    return `${pendiente.nombre} (paso ${pendiente.paso})`;
+}
+
+// La lista en texto plano: "total del día, efectivo real, fondo actual (paso 2)"
 function textoPendientes(pendientes, pasoDelMensaje) {
-    return pendientes
-        .map((p) => (p.paso === pasoDelMensaje ? p.nombre : `${p.nombre} (paso ${p.paso})`))
-        .join(", ");
+    return pendientes.map((p) => nombrePendiente(p, pasoDelMensaje)).join(", ");
+}
+
+// La misma lista, pero cada pendiente es un enlace que lleva a su campo.
+// Se construye con createElement (no con innerHTML) y se escribe en "contenedor":
+//   inicio + enlace1 + ", " + enlace2 + ... + fin
+function escribirPendientesConEnlaces(contenedor, inicio, pendientes, pasoDelMensaje, fin) {
+    contenedor.textContent = inicio;
+
+    pendientes.forEach((pendiente, i) => {
+        if (i > 0) contenedor.append(", ");
+
+        const enlace = document.createElement("a");
+        enlace.className = "enlace-pendiente";
+        enlace.href = `#${pendiente.campo}`;
+        enlace.textContent = nombrePendiente(pendiente, pasoDelMensaje);
+        enlace.addEventListener("click", (evento) => {
+            evento.preventDefault();
+            irAlCampo(pendiente.campo);
+        });
+        contenedor.append(enlace);
+    });
+
+    contenedor.append(fin);
+}
+
+// Resalta (borde mostaza suave) los campos vacíos que impiden ver el resultado.
+// Solo cuando el usuario ya ha empezado: con la página vacía no se marca nada.
+function marcarCamposBloqueantes() {
+    const empezado = hayDatosIntroducidos();
+    const bloqueantes = pendientesDelResultado().map((p) => p.campo);
+
+    ["totalDia", "efectivoReal", "fondoActual"].forEach((id) => {
+        const marcar = empezado && bloqueantes.includes(id);
+        document.getElementById(id).classList.toggle("is-bloqueante", marcar);
+    });
 }
 
 // ¿Se puede mostrar ya el veredicto?
-// Es la ÚNICA condición: la usan el paso 2 y el resumen (y por tanto el PDF).
+// Es la ÚNICA condición: la usan el paso 3 y el resumen (y por tanto el PDF).
 function cierreCompleto() {
     return pendientesDelResultado().length === 0;
 }
@@ -364,7 +403,7 @@ function textoDetalleResultado() {
     return `Efectivo real ${efectivoReal}${parteResto} frente a ${teorico} teóricos`;
 }
 
-// Tarjeta "Resultado del cierre" del paso 2
+// Tarjeta "Resultado del cierre" del paso 3
 function mostrarResultadoCierre() {
     const tarjeta = document.getElementById("resultadoFinal");
     const estadoTexto = document.getElementById("estadoResultado");
@@ -375,12 +414,14 @@ function mostrarResultadoCierre() {
     // Estado neutro: sin veredicto, sin importe y sin colores de resultado
     // (los colores dependen de data-estado, así que basta con quitarlo).
     // En su lugar se dice qué falta, con la misma lista que decide cierreCompleto().
+    // Cada dato que falta es un enlace a su campo.
+    marcarCamposBloqueantes();
     if (!cierreCompleto()) {
         delete tarjeta.dataset.estado;
         estadoTexto.hidden = true;
         cifra.hidden = true;
         significado.hidden = true;
-        sub.textContent = `Falta: ${textoPendientes(pendientesDelResultado(), 2)}`;
+        escribirPendientesConEnlaces(sub, "Falta: ", pendientesDelResultado(), 3, "");
         return;
     }
 
@@ -417,7 +458,7 @@ function actualizarFondo() {
     }
 
     // El fondo actual cambia el resto (que entra en la diferencia) y decide si
-    // el cierre está completo: el resultado del paso 2 se refresca también aquí.
+    // el cierre está completo: el resultado del paso 3 se refresca también aquí.
     mostrarResultadoCierre();
     actualizarResumen();
 }
@@ -427,7 +468,16 @@ function escribirImporte(id, centimos) {
     document.getElementById(id).textContent = formatearCentimos(centimos);
 }
 
-// Texto de la diferencia con el cierre completo, igual que en el paso 2:
+// Igual que escribirImporte, pero para una cifra que sale en varios sitios
+// (p. ej. el fondo final, en las cifras clave y en el desglose): todos los
+// elementos con esa clase reciben el mismo valor.
+function escribirImporteEnTodos(selector, centimos) {
+    document.querySelectorAll(selector).forEach((elemento) => {
+        elemento.textContent = formatearCentimos(centimos);
+    });
+}
+
+// Texto de la diferencia con el cierre completo, igual que en el paso 3:
 // "Sobran 2,30 €", "Faltan 1,00 €" o "Caja cuadrada"
 function textoDiferencia(diferencia) {
     const { estado, etiqueta } = estadoDiferencia(diferencia);
@@ -435,9 +485,9 @@ function textoDiferencia(diferencia) {
     return `${etiqueta} ${formatearCentimos(Math.abs(diferencia))}`;
 }
 
-// La diferencia sale en el desglose del resumen, en la tarjeta "Cierre del día"
-// (la que se imprime), junto al resto fuera del fondo. No va en la tarjeta de
-// arriba para no mezclarla con lo del fondo. La fila lleva la clase "js-diferencia".
+// La diferencia sale dos veces en el resumen: en las cifras clave (arriba) y
+// en la tarjeta "Cierre del día" del desglose (la que se imprime). Las dos
+// filas llevan la clase "js-diferencia".
 // Con el cierre incompleto se muestra "—" y sin color.
 function mostrarDiferenciaResumen(diferencia) {
     const completo = cierreCompleto();
@@ -450,7 +500,8 @@ function mostrarDiferenciaResumen(diferencia) {
     });
 }
 
-// "A ingresar" también sale dos veces: se copia del paso 3 (incluye el "— €")
+// "A ingresar" también sale en el resumen (cifras clave y desglose):
+// se copia del paso 2 (incluye el "— €")
 function mostrarAIngresarResumen() {
     const texto = document.getElementById("cifraAIngresar").textContent;
     document.querySelectorAll(".js-a-ingresar dd").forEach((dd) => {
@@ -458,8 +509,48 @@ function mostrarAIngresarResumen() {
     });
 }
 
+// Responsable en la cabecera del resumen, junto a la fecha.
+// Si no hay nombre escrito, la línea se oculta (no se muestra "—").
+function mostrarResponsableResumen() {
+    const nombre = document.getElementById("responsable").value.trim();
+    const cabecera = document.getElementById("resumenResponsableCabecera");
+    cabecera.textContent = nombre;
+    cabecera.hidden = nombre === "";
+}
+
+// Estado del cierre: dice si falta INFORMACIÓN, no si el resultado es bueno.
+// Usa la misma condición que el resultado del paso 3 (cierreCompleto) y la
+// misma lista de pendientes, así nunca se contradicen.
+// Se escribe en dos sitios: la frase del paso 4 y la etiqueta de la cabecera.
+function mostrarEstadoCierre() {
+    const completo = cierreCompleto();
+    const pendientes = pendientesDelResultado();
+    // El 4 es el paso del mensaje: todos los pendientes dicen en qué paso están
+    const frase = completo
+        ? "Cierre completo. Ya puedes descargar el resumen."
+        : `Cierre pendiente: faltan ${textoPendientes(pendientes, 4)}.`;
+
+    const estadoPaso4 = document.getElementById("estadoCierre");
+    // Solo se reescribe si cambia, para que el lector de pantalla
+    // (aria-live) no repita la frase con cada tecla
+    if (estadoPaso4.textContent !== frase) {
+        if (completo) {
+            estadoPaso4.textContent = frase;
+        } else {
+            // Mismo texto, pero con cada pendiente como enlace a su campo
+            escribirPendientesConEnlaces(estadoPaso4, "Cierre pendiente: faltan ", pendientes, 4, ".");
+        }
+    }
+    estadoPaso4.dataset.estado = completo ? "completo" : "pendiente";
+
+    const etiqueta = document.getElementById("estadoCierreCabecera");
+    etiqueta.textContent = completo ? "Completo" : "Pendiente";
+    etiqueta.dataset.estado = completo ? "completo" : "pendiente";
+}
+
 function actualizarResumen() {
     document.getElementById("resumenResponsable").textContent = document.getElementById("responsable").value || "—";
+    mostrarResponsableResumen();
 
     escribirImporte("resumenMonedas", monedasCentimos());
     escribirImporte("resumenBilletes", billetesCentimos());
@@ -470,21 +561,22 @@ function actualizarResumen() {
     escribirImporte("resumenUber", leerCentimos("uber"));
     escribirImporte("resumenGastos", leerCentimos("gastos"));
     escribirImporte("resumenEfectivoTeorico", efectivoTeoricoCentimos());
-    escribirImporte("resumenEfectivoReal", leerCentimos("efectivoReal"));
+    const fondo = calcularFondo();
+    // Efectivo real + resto fuera del fondo, ya sumados en una sola cifra
+    escribirImporte("resumenEfectivoReal", leerCentimos("efectivoReal") + fondo.resto);
     mostrarDiferenciaResumen(diferenciaCentimos());
 
-    const fondo = calcularFondo();
     escribirImporte("resumenFondoActual", fondo.fondoActual);
     escribirImporte("resumenSumaMonedas", fondo.sumaMonedas);
     escribirImporte("resumenTotalDisponible", fondo.totalDisponible);
-    escribirImporte("resumenFondoFinal", fondo.fondoFinal);
-    // El resto sale dos veces en el desglose: junto a la diferencia y en el fondo
-    document.querySelectorAll(".js-resto-fondo").forEach((dd) => {
-        dd.textContent = formatearCentimos(fondo.resto);
-    });
+    escribirImporteEnTodos(".js-fondo-final", fondo.fondoFinal);
+    escribirImporteEnTodos(".js-resto-fondo", fondo.resto);
+    // En las cifras clave, el resto solo aparece si hay céntimos fuera del fondo
+    document.querySelector(".js-fila-resto").hidden = fondo.resto === 0;
     escribirImporte("resumenFondoObjetivo", fondo.fondoObjetivo);
     mostrarAIngresarResumen();
 
+    mostrarEstadoCierre();
     actualizarEstadoPasos();
 }
 
@@ -563,10 +655,11 @@ window.addEventListener("afterprint", () => {
 
 // ---------- Indicador de progreso ----------
 // ---------- Desplazamiento entre pasos ----------
-// Alto real de la barra de pasos (sticky), para no dejar la sección tapada.
+// Alto real de la barra pegada arriba, para no dejar la sección tapada.
+// (La franja del contador cuelga debajo sin ocupar sitio: no cuenta.)
 function alturaBarraPasos() {
-    const nav = document.getElementById("pasos");
-    return nav ? nav.getBoundingClientRect().height : 0;
+    const barra = document.getElementById("barraSuperior");
+    return barra ? barra.getBoundingClientRect().height : 0;
 }
 
 // Desplazamiento suave, salvo si el usuario pidió reducir el movimiento
@@ -605,6 +698,18 @@ function irAlPaso(idSeccion) {
     if (titulo) titulo.focus({ preventScroll: true });
 }
 
+// Enlaces de "Falta: …": desplaza hasta el campo (dejando sitio a la barra
+// de pasos y a su etiqueta) y le pasa el foco para escribir directamente.
+function irAlCampo(idCampo) {
+    const campo = document.getElementById(idCampo);
+    if (!campo) return;
+
+    const contenedor = campo.closest(".campo") || campo;
+    const destino = contenedor.getBoundingClientRect().top + window.scrollY - alturaBarraPasos() - 16;
+    window.scrollTo({ top: Math.max(destino, 0), behavior: comportamientoScroll() });
+    campo.focus({ preventScroll: true });
+}
+
 function inicializarPasos() {
     // El paso 1 no tiene un contenedor propio: se vigilan su título, el
     // selector y los dos paneles, para detectar el paso 1 también cuando el
@@ -617,17 +722,33 @@ function inicializarPasos() {
         { id: "selector", paso: "efectivo" },
         { id: "panelMonedas", paso: "efectivo" },
         { id: "panelBilletes", paso: "efectivo" },
-        { id: "seccionDatos", paso: "datos" },
         { id: "seccionFondo", paso: "fondo" },
+        { id: "seccionDatos", paso: "datos" },
         { id: "seccionResumen", paso: "resumen" },
     ];
     const enlaces = document.querySelectorAll(".pasos__paso");
 
+    let pasoActual = "efectivo";
+
     function marcarActivo(pasoActivo) {
+        pasoActual = pasoActivo;
         enlaces.forEach((enlace) => {
             enlace.classList.toggle("is-activo", enlace.dataset.paso === pasoActivo);
         });
+        actualizarFranjaContador();
     }
+
+    // La franja del total contado solo aparece mientras se cuenta: en el
+    // paso 1 y cuando el selector Monedas/Billetes ya ha subido por debajo
+    // de la barra (antes, el total aún está a la vista y la franja taparía
+    // la introducción).
+    function actualizarFranjaContador() {
+        const selector = document.getElementById("selector");
+        const contando = selector.getBoundingClientRect().bottom < alturaBarraPasos();
+        document.getElementById("franjaContador").hidden = !(pasoActual === "efectivo" && contando);
+    }
+
+    window.addEventListener("scroll", actualizarFranjaContador, { passive: true });
 
     enlaces.forEach((enlace) => {
         enlace.addEventListener("click", (evento) => {
